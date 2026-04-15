@@ -35,7 +35,6 @@
     a { color: var(--accent); text-decoration: none; }
     a:hover { text-decoration: underline; }
 
-    /* ── Nav ─────────────────────────────────── */
     nav {
       position: sticky; top: 0; z-index: 50;
       background: rgba(255,255,255,0.94);
@@ -55,10 +54,8 @@
     }
     .nav-links a:hover { color: var(--text); }
 
-    /* ── Layout ──────────────────────────────── */
     .page { max-width: 820px; margin: 0 auto; padding: 0 2rem; }
 
-    /* ── Hero ────────────────────────────────── */
     .hero {
       display: grid;
       grid-template-columns: 1fr 190px;
@@ -75,13 +72,12 @@
       margin-bottom: 1.1rem;
     }
 
-    /* 성경 구절 */
     .verse {
       display: flex; gap: 0.7rem; align-items: flex-start;
       margin-bottom: 1.5rem;
     }
     .verse-bar {
-      flex-shrink: 0; width: 2px; height: auto;
+      flex-shrink: 0; width: 2px;
       background: var(--accent); border-radius: 1px;
       align-self: stretch; min-height: 36px;
     }
@@ -114,7 +110,6 @@
     .chip-dark { background: var(--text); color: #fff; border-color: var(--text); }
     .chip-dark:hover { background: #333; color: #fff; border-color: #333; }
 
-    /* ── Profile photo ────────────────────────── */
     .photo-wrap { padding-top: 0.4rem; }
     .photo-frame {
       width: 180px; height: 220px;
@@ -135,9 +130,9 @@
       letter-spacing: 0.08em; text-transform: uppercase;
     }
 
-    /* ── Sections ────────────────────────────── */
     section { padding: 3.5rem 0; border-bottom: 1px solid var(--rule); }
     section:last-of-type { border-bottom: none; }
+    #education { padding: 1.5rem 0; }
 
     .sec-head {
       font-family: var(--serif);
@@ -147,19 +142,30 @@
       border-bottom: 1px solid var(--rule);
     }
 
-    /* ── About ───────────────────────────────── */
     .about-text { font-size: 15.5px; color: var(--sub); line-height: 1.9; }
     .about-text p + p { margin-top: 0.9rem; }
 
-    /* ── Education ───────────────────────────── */
+    /* ── Education: 핵심 수정 부분 ── */
     .edu-list { display: flex; flex-direction: column; }
     .edu-row {
-      display: grid; grid-template-columns: 115px 1fr;
-      gap: 1.5rem; padding: 1.25rem 0;
+      display: grid;
+      grid-template-columns: 140px 1fr;
+      gap: 1.5rem;
+      padding: 1.8rem 0;
       border-bottom: 1px solid var(--rule);
+      align-items: center;
     }
     .edu-row:last-child { border-bottom: none; }
-    .edu-year { font-size: 13px; color: var(--faint); padding-top: 3px; }
+    .edu-year {
+      font-size: 13px; color: var(--faint);
+      white-space: nowrap;
+    }
+    .edu-content {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding-top: 0rem;
+    }
     .edu-degree {
       font-family: var(--serif); font-size: 17.5px;
       font-weight: 400; margin-bottom: 3px;
@@ -167,7 +173,6 @@
     .edu-school { font-size: 13.5px; color: var(--muted); }
     .edu-note   { font-size: 13px; color: var(--faint); font-style: italic; margin-top: 3px; }
 
-    /* ── Publications ────────────────────────── */
     .pub-filter { display: flex; gap: 6px; margin-bottom: 1.8rem; flex-wrap: wrap; }
     .f-btn {
       padding: 4px 14px; font-family: var(--sans);
@@ -205,7 +210,6 @@
     }
     .pub-lnk:hover { color: var(--accent); border-bottom-color: var(--accent); text-decoration: none; }
 
-    /* ── Contact ─────────────────────────────── */
     .contact-row {
       display: flex; align-items: baseline; gap: 2rem;
       padding: 0.9rem 0; border-bottom: 1px solid var(--rule); font-size: 14.5px;
@@ -216,19 +220,18 @@
       letter-spacing: 0.1em; text-transform: uppercase; color: var(--faint);
     }
 
-    /* ── Footer ──────────────────────────────── */
     footer {
       padding: 2.2rem 0; border-top: 1px solid var(--rule);
       font-size: 12.5px; color: var(--faint);
     }
     footer .page { display: flex; justify-content: space-between; align-items: center; }
 
-    /* ── Mobile ──────────────────────────────── */
     @media (max-width: 620px) {
       .hero { grid-template-columns: 1fr; gap: 2rem; padding: 3rem 0; }
       .photo-wrap { order: -1; }
       .photo-frame { width: 110px; height: 135px; }
       .edu-row { grid-template-columns: 1fr; gap: 3px; }
+      .edu-year { white-space: normal; }
       .pub-item { grid-template-columns: 1fr; }
       .pub-num { display: none; }
       .nav-links { gap: 1rem; }
@@ -242,7 +245,6 @@
   <div class="nav-inner">
     <span class="nav-name">Donggyu Kim</span>
     <ul class="nav-links">
-      <li><a href="#about">About</a></li>
       <li><a href="#education">Education</a></li>
       <li><a href="#publications">Publications</a></li>
       <li><a href="#contact">Contact</a></li>
@@ -252,12 +254,10 @@
 
 <div class="page">
 
-  <!-- HERO -->
   <div class="hero">
     <div>
       <h1>Hi. I'm <strong>Donggyu Kim</strong></h1>
 
-      <!-- 성경 구절 - 원하는 구절로 교체하세요 -->
       <div class="verse">
         <div class="verse-bar"></div>
         <div class="verse-text">
@@ -267,9 +267,9 @@
       </div>
 
       <p class="hero-bio">
-          I am a graduate student at <a href="#">UNIST</a>, focusing on web security.
-          My interests lie in identifying and mitigating security vulnerabilities across software systems,
-          with an emphasis on practical attack surfaces and defense mechanisms. 
+        I am a graduate student at <a href="https://www.unist.ac.kr/unist/index.do">UNIST</a>, focusing on web security.
+        My interests lie in identifying and mitigating security vulnerabilities across software systems,
+        with an emphasis on practical attack surfaces and defense mechanisms.
       </p>
 
       <div class="hero-meta">
@@ -278,54 +278,39 @@
       </div>
 
       <div class="hero-links">
-        <!-- <a href="cv.pdf" class="chip chip-dark">CV</a> -->
-        <!-- <a href="https://scholar.google.com" class="chip" target="_blank">Google Scholar</a> -->
         <a href="https://github.com/ehdrb01" class="chip chip-dark" target="_blank">GitHub</a>
-        <!-- <a href="https://linkedin.com/in/yourprofile" class="chip" target="_blank">LinkedIn</a> -->
       </div>
     </div>
 
-    <!-- 프로필 사진 -->
     <div class="photo-wrap">
       <div class="photo-frame">
-        <img src="images/profile.jpg" alt="Donggyu Kim">
+        <img src="images/profile.jpg" alt="Donggyu Kim"
+             onerror="this.parentElement.innerHTML='<div class=\'photo-ph\'><div class=\'photo-ph-icon\'>🪪</div><span class=\'photo-ph-label\'>Profile Photo</span></div>'">
       </div>
     </div>
   </div>
-
-  <!-- ABOUT -->
-  <!-- <section id="about">
-    <h2 class="sec-head">About Me</h2>
-    <div class="about-text">
-      <p>
-        저는 <a href="#">[소속 기관 및 학과]</a>에서 [직함]으로 재직 중입니다.
-        주된 연구 관심사는 [연구 분야 A], [연구 분야 B], [연구 분야 C]입니다.
-      </p>
-      <p>
-        현재 [현재 진행 중인 프로젝트나 연구 방향]을 탐구하고 있으며,
-        [연구의 의의나 목표]를 추구하고 있습니다.
-      </p>
-    </div>
-  </section> -->
 
   <!-- EDUCATION -->
   <section id="education">
     <h2 class="sec-head">Education</h2>
     <div class="edu-list">
-
       <div class="edu-row">
-        <div class="edu-year">2026 –<br>current</div>
-        <div>
+        <div class="edu-year">2026 – current</div>
+        <div class="edu-content">
           <p class="edu-degree">Integrated M.S./Ph.D. in Computer Science and Engineering</p>
-          <p class="edu-school"><a href="https://www.unist.ac.kr/unist/index.do">Ulsan National Institute of Science and Technology</a>, <a href="https://websec-lab.github.io/index.html">@UNIST WebSec Lab</a></p>
+          <p class="edu-school">
+            <a href="https://www.unist.ac.kr/unist/index.do">Ulsan National Institute of Science and Technology</a>,
+            <a href="https://websec-lab.github.io/index.html">@UNIST WebSec Lab</a>
+          </p>
           <p class="edu-note">Advisor: <a href="https://seongil-wi.github.io/">Seongil Wi</a></p>
+          <div style="height: 25px;"></div>
         </div>
       </div>
-
+<div style="height: 20px;"></div>
       <div class="edu-row">
-        <div class="edu-year">2020 –<br>2026</div>
-        <div>
-          <p class="edu-degree">B.S. in School of Computer Science And Electrical Engineering</p>
+        <div class="edu-year">2020 – 2026</div>
+        <div class="edu-content">
+          <p class="edu-degree">B.S. in Computer Science and Electrical Engineering</p>
           <p class="edu-school"><a href="https://www.handong.edu/">Handong Global University</a></p>
         </div>
       </div>
@@ -346,14 +331,13 @@
 
     <div class="pub-list" id="pubList">
 
-    <div class="pub-item" data-type="conference">
+      <div class="pub-item" data-type="conference">
         <div class="pub-num">1</div>
         <div>
           <p class="pub-title">Pre-trained Models for Bytecode Instructions</p>
           <p class="pub-authors"><strong>Donggyu Kim</strong>, Taemin Kim, Jiho Shin, Song Wang, Heeyoul Choi, and Jaechang Nam</p>
           <p class="pub-venue">
             <em>18th IEEE International Conference on Software Testing, Verification and Validation (<strong>ICST</strong>)</em>, 2025
-            <!-- <span class="pub-badge">Conference</span> -->
           </p>
           <div class="pub-links">
             <a href="https://lifove.github.io/files/ICST_2025_byteBert_preprint.pdf" class="pub-lnk">Paper</a>
@@ -361,66 +345,16 @@
         </div>
       </div>
 
-      <!-- <div class="pub-item" data-type="conference">
-        <div class="pub-num">1</div>
-        <div>
-          <p class="pub-title">논문 제목을 여기에 입력합니다 <em>(To appear)</em></p>
-          <p class="pub-authors">공저자 A, 공저자 B, <strong>Your Name</strong></p>
-          <p class="pub-venue">
-            In <em>Proceedings of [학회명] (<strong>CONF</strong>)</em>, 2025
-            <span class="pub-badge">Conference</span>
-          </p>
-          <div class="pub-links">
-            <a href="#" class="pub-lnk">PDF</a>
-            <a href="#" class="pub-lnk">arXiv</a>
-            <a href="#" class="pub-lnk">Code</a>
-          </div>
-        </div>
-      </div> -->
-
-      <!-- <div class="pub-item" data-type="journal">
-        <div class="pub-num">2</div>
-        <div>
-          <p class="pub-title">두 번째 논문 제목을 여기에 입력합니다</p>
-          <p class="pub-authors"><strong>Your Name</strong>, 공저자 A, 공저자 B</p>
-          <p class="pub-venue">
-            <em>[학술지명] (<strong>JNL</strong>)</em>, 2024
-            <span class="pub-badge">Journal</span>
-          </p>
-          <div class="pub-links">
-            <a href="#" class="pub-lnk">Paper</a>
-            <a href="#" class="pub-lnk">DOI</a>
-            <a href="#" class="pub-lnk">GitHub</a>
-          </div>
-        </div>
-      </div> -->
-
-      <!-- <div class="pub-item" data-type="preprint">
-        <div class="pub-num">3</div>
-        <div>
-          <p class="pub-title">프리프린트 논문 제목을 여기에 입력합니다</p>
-          <p class="pub-authors"><strong>Your Name</strong>, 공저자 C</p>
-          <p class="pub-venue">
-            <em>arXiv preprint</em>, 2024
-            <span class="pub-badge">Preprint</span>
-          </p>
-          <div class="pub-links">
-            <a href="#" class="pub-lnk">arXiv</a>
-            <a href="#" class="pub-lnk">Code</a>
-          </div>
-        </div>
-      </div> -->
-
     </div>
   </section>
 
   <!-- CONTACT -->
-  <!-- <section id="contact">
+  <section id="contact">
     <h2 class="sec-head">Contact</h2>
     <div>
       <div class="contact-row">
         <span class="ck">Email</span>
-        <span><a href="mailto:your@email.com">dgkim@unist.ac.kr</a></span>
+        <span><a href="mailto:dgkim@unist.ac.kr">dgkim@unist.ac.kr</a></span>
       </div>
       <div class="contact-row">
         <span class="ck">Office</span>
@@ -431,7 +365,7 @@
         <span><a href="https://github.com/ehdrb01" target="_blank">github.com/ehdrb01</a></span>
       </div>
     </div>
-  </section> -->
+  </section>
 
 </div>
 
