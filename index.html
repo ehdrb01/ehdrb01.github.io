@@ -115,8 +115,11 @@
       width: 180px; height: 220px;
       border-radius: 3px; overflow: hidden;
       border: 1px solid var(--rule);
+      cursor: pointer;
+      transition: opacity 0.3s, border-color 0.2s;
+      user-select: none;
     }
-    .photo-frame img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .photo-frame img { width: 100%; height: 100%; object-fit: cover; display: block; pointer-events: none; }
     .photo-ph {
       width: 100%; height: 100%;
       background: #f5f5f5;
@@ -129,6 +132,9 @@
       font-size: 11px; color: var(--faint);
       letter-spacing: 0.08em; text-transform: uppercase;
     }
+
+    /* easter egg 피드백 도트 */
+    .click-dots { display: none; }
 
     section { padding: 3.5rem 0; border-bottom: 1px solid var(--rule); }
     section:last-of-type { border-bottom: none; }
@@ -145,7 +151,6 @@
     .about-text { font-size: 15.5px; color: var(--sub); line-height: 1.9; }
     .about-text p + p { margin-top: 0.9rem; }
 
-    /* ── Education: 핵심 수정 부분 ── */
     .edu-list { display: flex; flex-direction: column; }
     .edu-row {
       display: grid;
@@ -156,15 +161,10 @@
       align-items: center;
     }
     .edu-row:last-child { border-bottom: none; }
-    .edu-year {
-      font-size: 13px; color: var(--faint);
-      white-space: nowrap;
-    }
+    .edu-year { font-size: 13px; color: var(--faint); white-space: nowrap; }
     .edu-content {
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      padding-top: 0rem;
+      display: flex; flex-direction: column;
+      justify-content: center; padding-top: 0rem;
     }
     .edu-degree {
       font-family: var(--serif); font-size: 17.5px;
@@ -248,7 +248,6 @@
       <li><a href="#education">Education</a></li>
       <li><a href="#publications">Publications</a></li>
       <li><a href="#contact">Contact</a></li>
-      <li><a href="blog.html">Blog</a></li>
     </ul>
   </div>
 </nav>
@@ -284,9 +283,17 @@
     </div>
 
     <div class="photo-wrap">
-      <div class="photo-frame">
+      <div class="photo-frame" id="photoFrame">
         <img src="images/profile.jpg" alt="Donggyu Kim"
              onerror="this.parentElement.innerHTML='<div class=\'photo-ph\'><div class=\'photo-ph-icon\'>🪪</div><span class=\'photo-ph-label\'>Profile Photo</span></div>'">
+      </div>
+      <!-- easter egg 피드백 도트 -->
+      <div class="click-dots" id="clickDots">
+        <div class="click-dot" id="dot0"></div>
+        <div class="click-dot" id="dot1"></div>
+        <div class="click-dot" id="dot2"></div>
+        <div class="click-dot" id="dot3"></div>
+        <div class="click-dot" id="dot4"></div>
       </div>
     </div>
   </div>
@@ -307,7 +314,7 @@
           <div style="height: 25px;"></div>
         </div>
       </div>
-<div style="height: 20px;"></div>
+      <div style="height: 20px;"></div>
       <div class="edu-row">
         <div class="edu-year">2020 – 2026</div>
         <div class="edu-content">
@@ -315,7 +322,6 @@
           <p class="edu-school"><a href="https://www.handong.edu/">Handong Global University</a></p>
         </div>
       </div>
-
     </div>
   </section>
 
@@ -331,7 +337,6 @@
     </div>
 
     <div class="pub-list" id="pubList">
-
       <div class="pub-item" data-type="conference">
         <div class="pub-num">1</div>
         <div>
@@ -345,7 +350,6 @@
           </div>
         </div>
       </div>
-
     </div>
   </section>
 
@@ -378,6 +382,7 @@
 </footer>
 
 <script>
+  // ── Publications filter ──
   document.querySelectorAll('.f-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       document.querySelectorAll('.f-btn').forEach(b => b.classList.remove('on'));
@@ -391,6 +396,45 @@
       });
     });
   });
+
+  // ── Easter egg: 사진 5번 빠르게 클릭 → blog.html ──
+  (function () {
+    const frame = document.getElementById('photoFrame');
+    const dots  = [0,1,2,3,4].map(i => document.getElementById('dot' + i));
+    const TOTAL = 5;
+    const WINDOW_MS = 800; // 클릭 간 허용 시간
+    let count = 0;
+    let timer = null;
+
+    function reset() {
+      count = 0;
+      dots.forEach(d => d.classList.remove('lit'));
+    }
+
+    frame.addEventListener('click', () => {
+      clearTimeout(timer);
+      count++;
+
+      // 도트 하나씩 켜기
+      if (count <= TOTAL) dots[count - 1].classList.add('lit');
+
+      if (count >= TOTAL) {
+        // 5번 달성 → 페이드 후 이동
+        frame.style.opacity = '0';
+        setTimeout(() => { window.location.href = 'blog.html'; }, 300);
+        return;
+      }
+
+      // 800ms 안에 다음 클릭 없으면 리셋
+      timer = setTimeout(reset, WINDOW_MS);
+    });
+
+    // 뒤로가기로 돌아왔을 때 사진 복구
+    window.addEventListener('pageshow', () => {
+      frame.style.opacity = '1';
+      reset();
+    });
+  })();
 </script>
 
 </body>
