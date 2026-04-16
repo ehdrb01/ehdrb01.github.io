@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Blog — Donggyu Kim</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --text:    #1c1c1c;
+      --sub:     #4a4a4a;
+      --muted:   #767676;
+      --faint:   #a8a8a8;
+      --rule:    #e6e6e6;
+      --accent:  #2a5885;
+      --accent-light: #e8f0f8;
+      --bg:      #ffffff;
+      --serif:   'EB Garamond', Georgia, serif;
+      --sans:    'DM Sans', system-ui, sans-serif;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 15px;
+      line-height: 1.75;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* ── Nav (index.html 동일) ── */
+    nav {
+      position: sticky; top: 0; z-index: 50;
+      background: rgba(255,255,255,0.94);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--rule);
+    }
+    .nav-inner {
+      max-width: 820px; margin: 0 auto; padding: 0 2rem;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 50px;
+    }
+    .nav-name { font-family: var(--serif); font-size: 16px; color: var(--text); text-decoration: none; }
+    .nav-links { display: flex; gap: 1.8rem; list-style: none; }
+    .nav-links a {
+      font-size: 12.5px; letter-spacing: 0.07em; text-transform: uppercase;
+      color: var(--muted); text-decoration: none; transition: color .18s;
+    }
+    .nav-links a:hover, .nav-links a.active { color: var(--text); }
+
+    .page { max-width: 820px; margin: 0 auto; padding: 0 2rem; }
+
+    /* ── Page header ── */
+    .blog-header {
+      padding: 4.5rem 0 3rem;
+      border-bottom: 1px solid var(--rule);
+    }
+    .blog-header h1 {
+      font-family: var(--serif);
+      font-size: clamp(2rem, 4vw, 2.8rem);
+      font-weight: 400;
+      line-height: 1.2;
+      margin-bottom: 0.7rem;
+    }
+    .blog-header p {
+      font-size: 15.5px;
+      color: var(--muted);
+    }
+
+    /* ── Filter bar ── */
+    .filter-bar {
+      display: flex; gap: 6px; align-items: center;
+      padding: 1.6rem 0 0;
+      flex-wrap: wrap;
+    }
+    .filter-label {
+      font-size: 11.5px; letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--faint); margin-right: 4px;
+    }
+    .f-btn {
+      padding: 4px 14px; font-family: var(--sans);
+      font-size: 12px; letter-spacing: 0.05em;
+      border: 1px solid var(--rule); background: transparent;
+      color: var(--muted); cursor: pointer; border-radius: 2px;
+      transition: all .18s;
+    }
+    .f-btn:hover, .f-btn.on {
+      background: var(--text); color: #fff; border-color: var(--text);
+    }
+
+    /* ── Post list ── */
+    .post-list {
+      display: flex; flex-direction: column;
+    }
+
+    .post-item {
+      display: grid;
+      grid-template-columns: 120px 1fr;
+      gap: 0 2.5rem;
+      padding: 2rem 0;
+      border-bottom: 1px solid var(--rule);
+      text-decoration: none;
+      color: inherit;
+      transition: background .15s;
+    }
+    .post-item:first-child { border-top: 1px solid var(--rule); }
+    .post-item:hover .post-title-text { color: var(--accent); }
+
+    .post-meta-col {
+      padding-top: 5px;
+      display: flex; flex-direction: column; gap: 6px;
+    }
+    .post-date {
+      font-size: 12.5px; color: var(--faint);
+      white-space: nowrap;
+    }
+    .post-type-badge {
+      display: inline-block;
+      font-size: 10.5px; letter-spacing: 0.06em; text-transform: uppercase;
+      padding: 2px 7px;
+      border: 1px solid var(--rule); border-radius: 2px;
+      color: var(--faint);
+      width: fit-content;
+    }
+
+    .post-content-col { display: flex; flex-direction: column; gap: 6px; }
+
+    .post-title-text {
+      font-family: var(--serif);
+      font-size: 20px; font-weight: 400; line-height: 1.35;
+      color: var(--text);
+      transition: color .18s;
+    }
+
+    .post-desc {
+      font-size: 14px; color: var(--muted); line-height: 1.7;
+    }
+
+    .post-tags {
+      display: flex; gap: 6px; flex-wrap: wrap;
+      margin-top: 4px;
+    }
+    .tag {
+      font-size: 11px; padding: 2px 9px;
+      border: 1px solid var(--rule); border-radius: 2px;
+      color: var(--faint);
+      transition: all .15s;
+    }
+    .post-item:hover .tag {
+      border-color: var(--accent-light);
+      color: var(--accent);
+    }
+
+    .post-arrow {
+      align-self: flex-start;
+      margin-top: 2px;
+      font-size: 18px;
+      color: var(--faint);
+      transition: all .18s;
+      display: flex; align-items: center; justify-content: flex-end;
+    }
+    .post-item:hover .post-arrow {
+      color: var(--accent);
+      transform: translateX(3px);
+    }
+
+    /* ── Pagination ── */
+    .pagination {
+      display: flex; align-items: center; justify-content: center;
+      gap: 4px;
+      padding: 2rem 0 4rem;
+    }
+    .pg-btn {
+      min-width: 34px; height: 34px;
+      display: inline-flex; align-items: center; justify-content: center;
+      font-family: var(--sans); font-size: 13px;
+      border: 1px solid var(--rule); border-radius: 2px;
+      background: transparent; color: var(--muted);
+      cursor: pointer; transition: all .18s;
+      padding: 0 8px;
+      text-decoration: none;
+    }
+    .pg-btn:hover { border-color: var(--accent); color: var(--accent); text-decoration: none; }
+    .pg-btn.active { background: var(--text); color: #fff; border-color: var(--text); }
+    .pg-btn:disabled { opacity: 0.3; pointer-events: none; }
+    .pg-ellipsis {
+      font-size: 13px; color: var(--faint);
+      padding: 0 4px; user-select: none;
+    }
+
+    /* ── Empty state ── */
+    .empty-state {
+      padding: 4rem 0;
+      text-align: center;
+      color: var(--faint);
+      font-size: 14.5px;
+      font-style: italic;
+      font-family: var(--serif);
+      display: none;
+    }
+
+    /* ── Footer (index.html 동일) ── */
+    footer {
+      padding: 2.2rem 0;
+      border-top: 1px solid var(--rule);
+      font-size: 12.5px; color: var(--faint);
+    }
+    footer .page { display: flex; justify-content: space-between; align-items: center; }
+
+    @media (max-width: 580px) {
+      .post-item { grid-template-columns: 1fr; gap: 0.5rem; }
+      .post-meta-col { flex-direction: row; align-items: center; padding-top: 0; }
+      .post-arrow { display: none; }
+      footer .page { flex-direction: column; gap: 4px; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="nav-name">Donggyu Kim</a>
+    <ul class="nav-links">
+      <li><a href="index.html#education">Education</a></li>
+      <li><a href="index.html#publications">Publications</a></li>
+      <li><a href="index.html#contact">Contact</a></li>
+      <li><a href="blog.html" class="active">Blog</a></li>
+    </ul>
+  </div>
+</nav>
+
+<div class="page">
+
+  <div class="blog-header">
+    <h1>Blog</h1>
+    <p>Research notes, write-ups, and thoughts on web security.</p>
+  </div>
+
+  <div class="filter-bar">
+    <span class="filter-label">Filter</span>
+    <button class="f-btn on" data-f="all">All</button>
+    <button class="f-btn" data-f="research">Research</button>
+    <button class="f-btn" data-f="write-up">Write-up</button>
+    <button class="f-btn" data-f="etc">Etc</button>
+  </div>
+
+  <div class="post-list" id="postList"></div>
+  <div class="empty-state" id="emptyState">No posts in this category yet.</div>
+  <div class="pagination" id="pagination"></div>
+
+</div>
+
+<footer>
+  <div class="page">
+    <span>© 2025 Donggyu Kim. All rights reserved.</span>
+    <span>Hosted on GitHub Pages</span>
+  </div>
+</footer>
+
+<script>
+  /* ✅ 포스트 추가할 때 여기 배열만 수정하세요 */
+  const posts = [
+    // {
+    //   file: "posts/post-1.md",
+    //   title: "Pre-trained Models for Bytecode Instructions",
+    //   date: "2025-06-01",
+    //   desc: "A deep dive into how pre-trained language models can be adapted for bytecode-level program analysis.",
+    //   tags: ["web security", "research"],
+    //   type: "research",
+    // },
+  ];
+
+  const list       = document.getElementById("postList");
+  const empty      = document.getElementById("emptyState");
+  const pgBar      = document.getElementById("pagination");
+  const buttons    = document.querySelectorAll(".f-btn");
+  const PER_PAGE   = 10;
+
+  let currentFilter = "all";
+  let currentPage   = 1;
+
+  function getFiltered() {
+    return (currentFilter === "all" ? posts : posts.filter(p => p.type === currentFilter))
+      .slice().sort((a, b) => new Date(b.date) - new Date(a.date));
+  }
+
+  function renderPosts(filtered) {
+    list.innerHTML = "";
+    if (filtered.length === 0) { empty.style.display = "block"; return; }
+    empty.style.display = "none";
+
+    const start = (currentPage - 1) * PER_PAGE;
+    filtered.slice(start, start + PER_PAGE).forEach(p => {
+      const el = document.createElement("a");
+      el.className = "post-item";
+      el.href = `post.html?file=${encodeURIComponent(p.file)}`;
+      el.innerHTML = `
+        <div class="post-meta-col">
+          <span class="post-date">${p.date}</span>
+          <span class="post-type-badge">${p.type}</span>
+        </div>
+        <div class="post-content-col">
+          <p class="post-title-text">${p.title}</p>
+          <p class="post-desc">${p.desc}</p>
+          <div class="post-tags">
+            ${p.tags.map(t => `<span class="tag">${t}</span>`).join("")}
+          </div>
+        </div>`;
+      list.appendChild(el);
+    });
+  }
+
+  function renderPagination(total) {
+    pgBar.innerHTML = "";
+    const totalPages = Math.ceil(total / PER_PAGE);
+    if (totalPages <= 1) return;
+
+    // 이전 버튼
+    const prev = document.createElement("button");
+    prev.className = "pg-btn";
+    prev.innerHTML = "&#8592;";
+    prev.disabled = currentPage === 1;
+    prev.addEventListener("click", () => goTo(currentPage - 1));
+    pgBar.appendChild(prev);
+
+    // 페이지 번호 (최대 7개 표시, 나머지는 … 처리)
+    const pages = buildPageRange(currentPage, totalPages);
+    pages.forEach(p => {
+      if (p === "…") {
+        const span = document.createElement("span");
+        span.className = "pg-ellipsis";
+        span.textContent = "…";
+        pgBar.appendChild(span);
+      } else {
+        const btn = document.createElement("button");
+        btn.className = "pg-btn" + (p === currentPage ? " active" : "");
+        btn.textContent = p;
+        btn.addEventListener("click", () => goTo(p));
+        pgBar.appendChild(btn);
+      }
+    });
+
+    // 다음 버튼
+    const next = document.createElement("button");
+    next.className = "pg-btn";
+    next.innerHTML = "&#8594;";
+    next.disabled = currentPage === totalPages;
+    next.addEventListener("click", () => goTo(currentPage + 1));
+    pgBar.appendChild(next);
+  }
+
+  function buildPageRange(cur, total) {
+    if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
+    if (cur <= 4)  return [1, 2, 3, 4, 5, "…", total];
+    if (cur >= total - 3) return [1, "…", total-4, total-3, total-2, total-1, total];
+    return [1, "…", cur - 1, cur, cur + 1, "…", total];
+  }
+
+  function goTo(page) {
+    currentPage = page;
+    const filtered = getFiltered();
+    renderPosts(filtered);
+    renderPagination(filtered.length);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
+  function render(filter) {
+    currentFilter = filter;
+    currentPage   = 1;
+    const filtered = getFiltered();
+    renderPosts(filtered);
+    renderPagination(filtered.length);
+  }
+
+  buttons.forEach(btn => {
+    btn.addEventListener("click", () => {
+      buttons.forEach(b => b.classList.remove("on"));
+      btn.classList.add("on");
+      render(btn.dataset.f);
+    });
+  });
+
+  render("all");
+</script>
+
+</body>
+</html>
