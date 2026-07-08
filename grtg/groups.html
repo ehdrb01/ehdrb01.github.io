@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>2026 그루터기 청년부 여름수련회 조 배정</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <section class="workspace" aria-labelledby="page-title">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">Group Mixer</p>
+            <h1 id="page-title">그루터기 청년부 여름수련회 조 배정</h1>
+          </div>
+          <div class="roster-count" aria-label="전체 인원">
+            <span id="totalCount">0</span>
+            <small>명</small>
+          </div>
+        </header>
+
+        <section class="layout-grid">
+          <aside class="control-panel" aria-label="조 배정 설정">
+            <div class="panel-section">
+              <h2>설정</h2>
+              <div class="segmented-control" role="tablist" aria-label="배정 기준">
+                <button class="segment is-active" id="modeSize" type="button" data-mode="size">
+                  한 조 인원
+                </button>
+                <button class="segment" id="modeCount" type="button" data-mode="count">
+                  조 개수
+                </button>
+              </div>
+
+              <label class="number-field" for="groupValue">
+                <span id="groupValueLabel">한 조당 인원</span>
+                <input id="groupValue" type="number" min="2" max="99" value="4" inputmode="numeric" />
+              </label>
+
+              <div class="button-row">
+                <button class="primary-button" id="shuffleButton" type="button">배정하기</button>
+                <button class="ghost-button" id="resetButton" type="button">초기화</button>
+              </div>
+            </div>
+
+            <div class="panel-section">
+              <h2>명단</h2>
+              <div class="people-list" id="peopleList" aria-label="참여자 명단"></div>
+              <p class="late-note" id="lateNote"></p>
+            </div>
+          </aside>
+
+          <section class="result-panel" aria-live="polite">
+            <div class="result-header">
+              <div>
+                <p class="eyebrow">Result</p>
+                <h2 id="resultTitle">아직 배정 전입니다</h2>
+              </div>
+              <p class="status-pill" id="statusPill">대기</p>
+            </div>
+
+            <div class="groups-grid" id="groupsGrid"></div>
+          </section>
+        </section>
+      </section>
+    </main>
+
+    <script src="script.js"></script>
+  </body>
+</html>
