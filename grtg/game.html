@@ -1,0 +1,1778 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>문제 풀이 보드</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #f6f3ee;
+        --surface: #ffffff;
+        --surface-muted: #f0e8dc;
+        --text: #1e2328;
+        --muted: #6c747c;
+        --line: #d8d0c5;
+        --accent: #1c6f67;
+        --accent-strong: #0e4f49;
+        --answer: #7b3f00;
+        --shadow: 0 18px 45px rgba(33, 37, 41, 0.12);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background: var(--bg);
+        color: var(--text);
+        font-family:
+          Inter, Pretendard, -apple-system, BlinkMacSystemFont, "Segoe UI",
+          sans-serif;
+        letter-spacing: 0;
+      }
+
+      button {
+        font: inherit;
+      }
+
+      button {
+        cursor: pointer;
+      }
+
+      .app {
+        width: min(1120px, calc(100% - 32px));
+        margin: 0 auto;
+        padding: 28px 0 44px;
+      }
+
+      .topbar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 18px;
+        min-height: 58px;
+        margin-bottom: 24px;
+      }
+
+      .title-wrap {
+        min-width: 0;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: clamp(1.55rem, 2vw, 2.15rem);
+        line-height: 1.15;
+      }
+
+      .subtitle {
+        margin: 8px 0 0;
+        color: var(--muted);
+        font-size: 0.98rem;
+      }
+
+      .status {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        flex: 0 0 auto;
+      }
+
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 36px;
+        padding: 0 14px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        background: var(--surface);
+        color: var(--text);
+        font-weight: 700;
+        white-space: nowrap;
+      }
+
+      .reset-btn,
+      .secondary-btn,
+      .primary-btn {
+        min-height: 42px;
+        border: 0;
+        border-radius: 8px;
+        padding: 0 16px;
+        font-weight: 800;
+      }
+
+      .reset-btn,
+      .secondary-btn {
+        border: 1px solid var(--line);
+        background: var(--surface);
+        color: var(--text);
+      }
+
+      .primary-btn {
+        background: var(--accent);
+        color: white;
+      }
+
+      .primary-btn:hover {
+        background: var(--accent-strong);
+      }
+
+      .reset-btn:hover,
+      .secondary-btn:hover,
+      .problem-dot:hover {
+        border-color: var(--accent);
+      }
+
+      .board {
+        display: grid;
+        grid-template-columns: repeat(10, minmax(56px, 1fr));
+        gap: 14px;
+        padding: 24px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--surface);
+        box-shadow: var(--shadow);
+      }
+
+      .problem-dot,
+      .problem-slot {
+        aspect-ratio: 1;
+        width: 100%;
+        min-width: 0;
+        border-radius: 999px;
+      }
+
+      .problem-dot {
+        border: 2px solid transparent;
+        background:
+          radial-gradient(circle at 35% 25%, rgba(255, 255, 255, 0.82), transparent 34%),
+          var(--surface-muted);
+        color: var(--text);
+        font-size: clamp(0.9rem, 1.7vw, 1.2rem);
+        font-weight: 900;
+        box-shadow: inset 0 -8px 18px rgba(30, 35, 40, 0.08);
+        transition:
+          border-color 150ms ease,
+          transform 150ms ease,
+          background 150ms ease;
+      }
+
+      .problem-slot {
+        border: 2px dashed rgba(216, 208, 197, 0.65);
+        background: rgba(246, 243, 238, 0.55);
+      }
+
+      .problem-dot:hover {
+        transform: translateY(-2px);
+        background:
+          radial-gradient(circle at 35% 25%, rgba(255, 255, 255, 0.88), transparent 34%),
+          #d9eee8;
+      }
+
+      .problem-dot:focus-visible,
+      .reset-btn:focus-visible,
+      .secondary-btn:focus-visible,
+      .primary-btn:focus-visible {
+        outline: 3px solid rgba(28, 111, 103, 0.26);
+        outline-offset: 3px;
+      }
+
+      .empty-state {
+        display: none;
+        margin-top: 18px;
+        padding: 46px 24px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--surface);
+        text-align: center;
+        box-shadow: var(--shadow);
+      }
+
+      .empty-state strong {
+        display: block;
+        margin-bottom: 10px;
+        font-size: 1.35rem;
+      }
+
+      .empty-state p {
+        margin: 0 0 20px;
+        color: var(--muted);
+      }
+
+      .screen {
+        display: none;
+      }
+
+      .screen.active {
+        display: block;
+      }
+
+      .problem-view {
+        display: grid;
+        gap: 18px;
+      }
+
+      .problem-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+      }
+
+      .problem-number {
+        color: var(--accent-strong);
+        font-size: 0.95rem;
+        font-weight: 900;
+      }
+
+      .constraint-text {
+        margin-top: 8px;
+        color: var(--accent-strong);
+        font-size: 0.98rem;
+        font-weight: 900;
+        line-height: 1.45;
+      }
+
+      .constraint-text[hidden] {
+        display: none;
+      }
+
+      .problem-panel {
+        display: grid;
+        gap: 22px;
+        padding: 28px;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: var(--surface);
+        box-shadow: var(--shadow);
+      }
+
+      .problem-text {
+        margin: 0;
+        font-size: clamp(1.2rem, 2.2vw, 1.75rem);
+        line-height: 1.55;
+        white-space: pre-line;
+      }
+
+      .question-main {
+        font-size: clamp(1.35rem, 2.4vw, 2.1rem);
+        font-weight: 850;
+        line-height: 1.45;
+        white-space: pre-line;
+      }
+
+      .question-image {
+        display: block;
+        width: min(100%, 860px);
+        margin: 0 auto;
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        background: #fff;
+      }
+
+      .problem-media {
+        display: grid;
+        place-items: center;
+      }
+
+      .problem-media:empty {
+        display: none;
+      }
+
+      .problem-media.has-answer-overlay {
+        position: relative;
+      }
+
+      .problem-media.has-answer-overlay .question-image,
+      .problem-media.has-answer-overlay .answer-panel {
+        grid-area: 1 / 1;
+      }
+
+      .problem-media.has-answer-overlay .answer-panel {
+        z-index: 1;
+        align-content: end;
+        width: min(100%, 860px);
+        height: 100%;
+        min-height: 0;
+        padding: clamp(18px, 4vw, 42px);
+        border: 0;
+        background: transparent;
+        box-shadow: none;
+        pointer-events: none;
+      }
+
+      .problem-media.has-answer-overlay .answer-panel h2,
+      .problem-media.has-answer-overlay .score-text {
+        display: none;
+      }
+
+      .problem-media.has-answer-overlay .answer-text {
+        padding: 10px 18px;
+        border-radius: 8px;
+        background: rgba(255, 255, 255, 0.78);
+        color: var(--answer);
+        box-shadow: 0 10px 28px rgba(42, 23, 5, 0.13);
+        font-size: clamp(2.2rem, 6vw, 5.2rem);
+        text-shadow: 0 2px 0 rgba(255, 255, 255, 0.85);
+      }
+
+      .type-kicker {
+        display: inline-flex;
+        align-items: center;
+        width: fit-content;
+        min-height: 34px;
+        margin-bottom: 18px;
+        padding: 0 12px;
+        border-radius: 999px;
+        background: #e4f4ef;
+        color: var(--accent-strong);
+        font-size: 0.9rem;
+        font-weight: 900;
+      }
+
+      .ox-options {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(120px, 1fr));
+        gap: 16px;
+        margin-top: 24px;
+      }
+
+      .ox-mark {
+        display: grid;
+        min-height: clamp(120px, 20vw, 210px);
+        place-items: center;
+        border: 2px solid var(--line);
+        border-radius: 8px;
+        background: #fbfaf7;
+        color: var(--accent-strong);
+        font-size: clamp(4rem, 12vw, 8.5rem);
+        font-weight: 950;
+        line-height: 1;
+      }
+
+      .action-stage {
+        display: grid;
+        gap: 20px;
+      }
+
+      .action-card {
+        display: grid;
+        min-height: clamp(220px, 34vh, 390px);
+        place-items: center;
+        padding: clamp(24px, 5vw, 58px);
+        border: 3px solid rgba(28, 111, 103, 0.22);
+        border-radius: 8px;
+        background:
+          radial-gradient(circle at 50% 0%, rgba(177, 219, 208, 0.8), transparent 48%),
+          linear-gradient(135deg, #f8fffc, #e7f4ef);
+        text-align: center;
+      }
+
+      .action-prompt {
+        color: var(--accent-strong);
+        font-size: clamp(2.2rem, 7vw, 5.8rem);
+        font-weight: 950;
+        line-height: 1.08;
+        word-break: keep-all;
+      }
+
+      .action-rule {
+        margin: 0;
+        color: var(--muted);
+        font-size: clamp(1rem, 1.8vw, 1.25rem);
+        font-weight: 750;
+        line-height: 1.45;
+      }
+
+      .charades-stage {
+        display: grid;
+        gap: 18px;
+      }
+
+      .charades-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 14px;
+      }
+
+      .charades-topic {
+        color: var(--accent-strong);
+        font-size: clamp(1rem, 2vw, 1.35rem);
+        font-weight: 950;
+      }
+
+      .charades-timer {
+        min-width: 112px;
+        padding: 8px 14px;
+        border: 2px solid rgba(28, 111, 103, 0.22);
+        border-radius: 8px;
+        background: #f3fbf8;
+        color: var(--accent-strong);
+        font-size: clamp(1.45rem, 4vw, 2.4rem);
+        font-weight: 950;
+        text-align: center;
+      }
+
+      .charades-card {
+        display: grid;
+        min-height: clamp(220px, 34vh, 380px);
+        place-items: center;
+        padding: clamp(24px, 5vw, 58px);
+        border: 3px solid rgba(28, 111, 103, 0.22);
+        border-radius: 8px;
+        background:
+          radial-gradient(circle at 50% 0%, rgba(177, 219, 208, 0.68), transparent 50%),
+          linear-gradient(135deg, #fbfffd, #e7f4ef);
+        text-align: center;
+      }
+
+      .charades-keyword {
+        color: var(--accent-strong);
+        font-size: clamp(3rem, 10vw, 7.2rem);
+        font-weight: 950;
+        line-height: 1.05;
+        word-break: keep-all;
+      }
+
+      .charades-controls {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 10px;
+      }
+
+      .charades-progress {
+        display: grid;
+        min-height: 42px;
+        place-items: center;
+        color: var(--muted);
+        font-weight: 900;
+      }
+
+      .answer-panel {
+        display: none;
+        position: relative;
+        overflow: hidden;
+        min-height: clamp(260px, 38vh, 440px);
+        place-items: center;
+        padding: clamp(28px, 5vw, 64px);
+        border: 3px solid rgba(123, 63, 0, 0.28);
+        border-radius: 8px;
+        background:
+          radial-gradient(circle at 50% 0%, rgba(255, 214, 148, 0.58), transparent 42%),
+          linear-gradient(135deg, rgba(255, 248, 238, 0.98), rgba(255, 236, 207, 0.94)),
+          #fff5e8;
+        box-shadow:
+          0 24px 60px rgba(123, 63, 0, 0.22),
+          inset 0 0 0 1px rgba(255, 255, 255, 0.62);
+        text-align: center;
+      }
+
+      .answer-panel.visible {
+        display: grid;
+        animation: answerPop 620ms cubic-bezier(0.16, 1, 0.3, 1);
+      }
+
+      .answer-panel.visible::after {
+        position: absolute;
+        inset: -28%;
+        background:
+          radial-gradient(circle at 50% 50%, rgba(255, 184, 77, 0.55), transparent 28%),
+          conic-gradient(
+            from 0deg,
+            transparent,
+            rgba(255, 190, 92, 0.34),
+            transparent,
+            rgba(255, 214, 148, 0.28),
+            transparent
+          );
+        content: "";
+        pointer-events: none;
+        animation: answerFlash 820ms ease-out both;
+      }
+
+      .answer-panel h2 {
+        position: relative;
+        z-index: 1;
+        margin: 0 0 18px;
+        color: var(--answer);
+        font-size: clamp(1.15rem, 2vw, 1.6rem);
+        font-weight: 900;
+      }
+
+      .answer-text {
+        position: relative;
+        z-index: 1;
+        margin: 0;
+        max-width: 980px;
+        color: #2a1705;
+        font-size: clamp(2.6rem, 8vw, 6.8rem);
+        font-weight: 950;
+        line-height: 1.08;
+        white-space: pre-line;
+        word-break: keep-all;
+      }
+
+      .score-text {
+        position: relative;
+        z-index: 1;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 52px;
+        margin-top: 28px;
+        padding: 0 20px;
+        border-radius: 999px;
+        background: rgba(123, 63, 0, 0.1);
+        color: var(--answer);
+        font-size: clamp(1.4rem, 3vw, 2.5rem);
+        font-weight: 950;
+      }
+
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+        gap: 10px;
+      }
+
+      @keyframes answerPop {
+        0% {
+          opacity: 0;
+          transform: translateY(34px) scale(0.72);
+        }
+
+        48% {
+          opacity: 1;
+          transform: translateY(-10px) scale(1.055);
+        }
+
+        100% {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+
+      @keyframes answerFlash {
+        0% {
+          opacity: 0;
+          transform: scale(0.3) rotate(0deg);
+        }
+
+        35% {
+          opacity: 1;
+        }
+
+        100% {
+          opacity: 0;
+          transform: scale(1.45) rotate(22deg);
+        }
+      }
+
+      @media (max-width: 820px) {
+        .topbar,
+        .problem-header {
+          align-items: stretch;
+          flex-direction: column;
+        }
+
+        .status {
+          justify-content: space-between;
+        }
+
+        .board {
+          grid-template-columns: repeat(5, minmax(48px, 1fr));
+          gap: 12px;
+          padding: 18px;
+        }
+      }
+
+      @media (max-width: 460px) {
+        .app {
+          width: min(100% - 20px, 1120px);
+          padding-top: 16px;
+        }
+
+        .status,
+        .actions {
+          display: grid;
+          grid-template-columns: 1fr;
+        }
+
+        .pill,
+        .reset-btn,
+        .secondary-btn,
+        .primary-btn {
+          width: 100%;
+        }
+
+        .board {
+          grid-template-columns: repeat(4, minmax(48px, 1fr));
+          gap: 10px;
+          padding: 14px;
+        }
+
+        .problem-panel {
+          padding: 20px;
+        }
+
+        .answer-text {
+          font-size: clamp(2.15rem, 13vw, 4.4rem);
+        }
+
+        .ox-options {
+          grid-template-columns: 1fr;
+        }
+
+        .charades-top,
+        .charades-controls {
+          grid-template-columns: 1fr;
+        }
+
+        .charades-top {
+          display: grid;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="app">
+      <section id="homeScreen" class="screen active" aria-labelledby="homeTitle">
+        <header class="topbar">
+          <div class="title-wrap">
+            <h1 id="homeTitle">문제 풀이 보드</h1>
+            <p class="subtitle">남은 문제를 선택하고, 답을 확인한 뒤 메인으로 돌아오면 해당 문제는 사라집니다.</p>
+          </div>
+          <div class="status" aria-live="polite">
+            <span id="progressPill" class="pill">문제 불러오는 중</span>
+            <button id="resetButton" class="reset-btn" type="button">초기화</button>
+          </div>
+        </header>
+
+        <div id="problemBoard" class="board" aria-label="남은 문제 목록"></div>
+
+        <div id="emptyState" class="empty-state">
+          <strong>모든 문제를 풀었습니다.</strong>
+          <p>초기화하면 문제를 다시 표시합니다.</p>
+          <button class="primary-btn" type="button" data-reset>다시 시작</button>
+        </div>
+      </section>
+
+      <section id="problemScreen" class="screen" aria-labelledby="problemTitle">
+        <header class="problem-header">
+          <div>
+            <div id="problemNumber" class="problem-number"></div>
+            <div id="constraintText" class="constraint-text"></div>
+            <h1 id="problemTitle">문제</h1>
+          </div>
+        </header>
+
+        <article class="problem-panel">
+          <div id="problemText" class="problem-text"></div>
+
+          <div id="answerPanel" class="answer-panel" aria-live="polite">
+            <h2>정답</h2>
+            <p id="answerText" class="answer-text"></p>
+            <div id="scoreText" class="score-text"></div>
+          </div>
+
+          <div id="problemMedia" class="problem-media"></div>
+
+          <div class="actions">
+            <button id="showAnswerButton" class="secondary-btn" type="button">답 보기</button>
+            <button id="completeButton" class="primary-btn" type="button" hidden>메인으로 돌아가기</button>
+          </div>
+        </article>
+      </section>
+    </main>
+
+    <script>
+      const STORAGE_KEY = "problem-board-completed-v4";
+
+      const problemContents = [
+        {
+          question: "혼인집 손님들이 누구와 함께 있을 동안에 금식할 수 없습니까? (마가복음 2:19)",
+          answer: "신랑",
+          score: 100,
+          constraint: "2026 새가족",
+        },
+        {
+          question: "해어짐을 막고자 어떤 조각을 낡은 옷에 붙이는 자가 없습니까? (마가복음 2:21)",
+          answer: "생베 조각",
+          score: 200,
+          constraint: "no constraint",
+        },
+        {
+          question: "새 포도주는 어디에 넣어야 합니까? (마가복음 2:22)",
+          answer: "새 부대",
+          score: 100,
+          constraint: "2026 새가족",
+        },
+        {
+          question: "새벽 날이 밝기 전, 한적한 곳에서 예수께서 하신 것은 무엇입니까? (마가복음 1:35)",
+          answer: "기도",
+          score: 100,
+          constraint: "2026 새가족",
+        },
+        {
+          question: "예수의 뒤를 따르며 주를 찾는다며 구한 사람은 누구입니까? (마가복음 1:36)",
+          answer: "시몬과 및 그와 함께 있는 자들",
+          score: 200,
+          constraint: "no constraint",
+        },
+        {
+          question: "온 갈릴리에 다니시며 회당에서 어떤 2가지 행위를 하셨습니까? (마가복음 1:39)",
+          answer: "전도하시고 또 귀신들을 내쫓으심",
+          score: 300,
+          constraint: "리더",
+        },
+        {
+          question: "각각 은사를 받은대로 서로 무엇같이 봉사하기를 원합니까? (베드로전서 4:10)",
+          answer: "선한 청지기",
+          score: 200,
+          constraint: "no constraint",
+        },
+        {
+          question: "말하는 것과 봉사하는 것은 각각 어떤 자세로 임해야 합니까? (베드로전서 4:11)",
+          answer: "말: 하나님의 말씀을 하는 것 같이 합니다.\n봉사: 하나님이 공급하시는 힘으로 하는 것 같이 합니다.",
+          score: 300,
+          constraint: "리더",
+        },
+        {
+          question: "예수 그리스도로 말미암아 범사에 누가 영광을 받으시게 합니까? (베드로전서 4:11)",
+          answer: "하나님",
+          score: 100,
+          constraint: "2026 새가족",
+        },
+        {
+          question: "솔로몬이 기브온의 산당에서 행한 것은 무엇입니까? (열왕기상 3:4)",
+          answer: "일천번제",
+          score: 200,
+          constraint: "no constraint",
+        },
+        {
+          question: "솔로몬의 아버지는 누구입니까? (열왕기상 3:6)",
+          answer: "다윗",
+          score: 100,
+          constraint: "2026 새가족",
+        },
+        {
+          question: "솔로몬이 백성을 재판하기 위해 하나님께 구한 것은 무엇입니까? (열왕기상 3:9)",
+          answer: "듣는 마음",
+          score: 200,
+          constraint: "리더",
+        },
+        {
+          question: "시몬과 그 형제 안드레가 그물 던지던 곳은 어디입니까? (마가복음 1:16)",
+          answer: "갈릴리 해변",
+          score: 100,
+          constraint: "새내기",
+        },
+        {
+          question: "그물 던지던 무리를 향해 예수님께서는 무엇이라 하셨습니까? (마가복음 1:17)",
+          answer: "내가 너희로 사람을 낚는 어부가 되게 하리라",
+          score: 200,
+          constraint: "no constraint",
+        },
+        {
+          question: "제자들은 무엇을 버려두고 따르고 있습니까? (마가복음 1:18)",
+          answer: "그물",
+          score: 100,
+          constraint: "새내기",
+        },
+        {
+          question: "가나안 입성 시. 조상들에게 한 맹세는 무엇입니까? (예레미야 11:5)",
+          answer: "젖과 꿀이 흐르는 땅을 주리라",
+          score: 200,
+          constraint: "리더",
+        },
+        {
+          question: "아멘의 뜻은 무엇입니까? (예레미야 11:5)",
+          answer: "그렇게 되기를 원합니다. 나 또한 그렇게 믿습니다. (동의와 응답)",
+          score: 300,
+          constraint: "no constraint",
+        },
+        {
+          question: "아브라함이 하갈의 어깨에 메워준 것은 무엇입니까? (창세기 21:14)",
+          answer: "떡과 물 한 가죽부대",
+          score: 200,
+          constraint: "no constraint",
+        },
+        {
+          question: "하갈이 아이(이스마엘)를 데리고 방황하던 곳은 어디입니까? (창세기 21:14)",
+          answer: "브엘세바 광야",
+          score: 200,
+          constraint: "no constraint",
+        },
+        {
+          question: "하갈이 가지고 있던 가죽부대의 물이 떨어지자 아이(이스마엘)를, 어디 아래에 두었습니까? (창세기 21:15)",
+          answer: "관목덤불 아래",
+          score: 300,
+          constraint: "no constraint",
+        },
+        {
+          question: "하나님이 그 아이(이스마엘)와 함께하시매, 광야에서 거주하며 무엇이 되었습니까? (창세기 21:20)",
+          answer: "활쏘는 자",
+          score: 200,
+          constraint: "no constraint",
+        },
+        {
+          question: "하갈은 아들 이스마엘을 위하여 어디서 아내를 얻어 주었습니까? (창세기 21:21)",
+          answer: "애굽땅",
+          score: 200,
+          constraint: "no constraint",
+        },
+        {
+          question: "다윗이 출정하지 않고 머물던 곳은 어디입니까? (사무엘하 11:1)",
+          answer: "예루살렘",
+          score: 100,
+          constraint: "no constraint",
+        },
+        {
+          question: "다윗은 어디를 거닐다가 여인이 목욕하는 것을 보았습니까? (사무엘하 11:2)",
+          answer: "왕궁 옥상",
+          score: 100,
+          constraint: "no constraint",
+        },
+        {
+          question: "엘리암의 딸이요, 헷 사람 우리아의 아내로 다윗이 범한 사람은 누구입니까? (사무엘하 11:3)",
+          answer: "밧세바",
+          score: 200,
+          constraint: "no constraint",
+        },
+        {
+          question: "한나의 남편으로 에브라림 산지에 거주하던 사람은 누구입니까? (사무엘상 1:1)",
+          answer: "엘가나",
+          score: 200,
+          constraint: "no constraint",
+        },
+        {
+          question: "매년 만군의 여호와께 예배드리러 간 곳은 어디입니까? (사무엘상 1:3)",
+          answer: "실로",
+          score: 100,
+          constraint: "no constraint",
+        },
+        {
+          question: "제물의 분깃을 한나에게는 어떻게 주었습니까? (사무엘상 1:5)",
+          answer: "갑절을 줌",
+          score: 200,
+          constraint: "no constraint",
+        },
+        {
+          question: "한나의 적수로 격분하게 하여 괴롭게 한 여인은 누구입니까? (사무엘상 1:6)",
+          answer: "브닌나",
+          score: 100,
+          constraint: "no constraint",
+        },
+        {
+          question: "예수를 죽을 방도를 궁리하며 동시에 백성을 두려워한 무리들은 누구입니까? (누가복음 22:2)",
+          answer: "대제사장들과 서기관들",
+          score: 300,
+          constraint: "리더",
+        },
+        {
+          question: "열둘 중의 하나인 가룟인이라 부르는 유다에게 무엇이 들어갔습니까? (누가복음 22:3)",
+          answer: "사탄",
+          score: 100,
+          constraint: "no constraint",
+        },
+        {
+          question: "민란을 꾸미고 그 민란 중에 살인하고 체포된 자는 누구입니까? (마가복음 15:7)",
+          answer: "바라바",
+          score: 200,
+          constraint: "no constraint",
+        },
+        {
+          question: "유대인의 왕이라 하는 이를 향해, 백성들은 무엇이라 소리쳤습니까? (마가복음 15:13)",
+          answer: "그를 십자가에 못 박게 하소서",
+          score: 300,
+          constraint: "no constraint",
+        },
+        {
+          question: "무리에게 만족을 주고자 예수를 채찍질하고 십자가에 못 박히게 넘겨준 사람은 누구입니까? (마가복음 15:15)",
+          answer: "빌라도",
+          score: 200,
+          constraint: "no constraint",
+        },
+        {
+          question: "예수와 두 행악자를 못 박은 곳은 어디입니까? (누가복음 23:33)",
+          answer: "해골이라 하는 곳 (골고다, 갈보리)",
+          score: 100,
+          constraint: "no constraint",
+        },
+        {
+          question: "십자가 앞에선 군인들이 희롱하며 무엇을 건네주었습니까? (누가복음 23:36)",
+          answer: "신 포도주",
+          score: 200,
+          constraint: "no constraint",
+        },
+        {
+          question: "예수께서 이르시되 오늘 네가 나와 함께 어디에 있으리라 명하셨습니까? (누가복음 23:43)",
+          answer: "낙원",
+          score: 200,
+          constraint: "no constraint",
+        },
+        {
+          question: "죽은 자 가운데서 다시 살아나사 잠자는 자들의 첫 열매가 되신 분은 누구입니까? (고린도전서 15:20)",
+          answer: "그리스도",
+          score: 100,
+          constraint: "no constraint",
+        },
+        {
+          question: "아담 안에서 모든 사람은 죽은 것 같이, 누구 안에서 모든 사람이 삶을 얻습니까? (고린도전서 15:22)",
+          answer: "그리스도",
+          score: 100,
+          constraint: "no constraint",
+        },
+        {
+          question: "스데반이 큰 기사와 표적을 민간에 행할 수 있었던 2가지는 무엇이 충만하여서입니까? (사도행전 6:8)",
+          answer: "은혜와 권능",
+          score: 300,
+          constraint: "리더",
+        },
+        {
+          question: "스데반을 대적하고자 사람들을 매수하여 누구와 누구를 모독하는 말을 들었다고 거짓 진술하고 있습니까? (사도행전 6:11)",
+          answer: "모세와 하나님",
+          score: 300,
+          constraint: "no constraint",
+        },
+        {
+          question: "천사의 얼굴과 같아 보였던 이는 누구입니까? (사도행전 6:15)",
+          answer: "스데반",
+          score: 100,
+          constraint: "no constraint",
+        },
+        {
+          question: "하나님이 요나에게 가서 외치라고 명한 성읍은 어디입니까? (요나 1:2)",
+          answer: "니느웨",
+          score: 100,
+          constraint: "새내기",
+        },
+        {
+          question: "요나가 여호와의 얼굴을 피하여 뱃삯을 주고 도망치고자 한 곳은 어디입니까? (요나 1:3)",
+          answer: "다시스",
+          score: 200,
+          constraint: "no constraint",
+        },
+        {
+          question: "폭풍을 만나, 재앙의 원인을 파악하고자 행한 방법은 무엇입니까? (요나 1:7)",
+          answer: "제비 뽑기",
+          score: 200,
+          constraint: "no constraint",
+        },
+        {
+          question: "물고기 뱃속에서 요나는 며칠을 머물렀습니까? (요나 1:17)",
+          answer: "3일",
+          score: 100,
+          constraint: "새내기",
+        },
+        {
+          question: "니느웨는 얼마만큼 큰 성으로 묘사되고 있습니까? (요나 3:3)",
+          answer: "사흘 동안 걸어야 됨",
+          score: 200,
+          constraint: "no constraint",
+        },
+        {
+          question: "회개의 결단으로 니느웨 백성들은, 높고 낮은 자를 막론하고 무엇을 입었습니까? (요나 3:5)",
+          answer: "굵은 베 옷",
+          score: 200,
+          constraint: "no constraint",
+        },
+        {
+          question: "큰 성 니느웨에는 좌우를 분변하지 못하는 자가 몇 명입니까? (요나 4:11)",
+          answer: "십이만여 명",
+          score: 300,
+          constraint: "no constraint",
+        },
+        {
+          question: "농사하는 자는 가인이며, 양치는 자는 누구입니까? (창세기 4:2)",
+          answer: "아벨",
+          score: 100,
+          constraint: "새내기",
+        },
+        {
+          question: "가인은 무엇을 제물 삼아 여호와께 드렸습니까? (창세기 4:3)",
+          answer: "땅의 소산",
+          score: 200,
+          constraint: "no constraint",
+        },
+        {
+          question: "빈칸에 들어갈 말은 무엇입니까?\n(   )가 너를 원하나, 너는 (   )를 다스릴지니라 (창세기 4:7)",
+          answer: "죄",
+          score: 300,
+          constraint: "no constraint",
+        },
+        {
+          question: "요셉의 형들이 요셉에게서 무엇을 벗긴 후, 구덩이에 던졌습니까? (창세기 37:23)",
+          answer: "채색옷",
+          score: 200,
+          constraint: "no constraint",
+        },
+        {
+          question: "형들은 이스마엘 사람들에게 요셉을 얼마에 팔았습니까? (창세기 37:28)",
+          answer: "은 이십",
+          score: 200,
+          constraint: "no constraint",
+        },
+        {
+          question: "홍수 후, 노아가 여호와께 올린 제사는 무엇입니까? (창세기 8:20)",
+          answer: "번제",
+          score: 100,
+          constraint: "no constraint",
+        },
+        {
+          question: "다윗을 죽이려 새 칼을 찬 이스비브놉이 든 놋 창의 무게는 얼마입니까? (사무엘하 21:16)",
+          answer: "삼백 세겔",
+          score: 300,
+          constraint: "no constraint",
+        },
+        {
+          question: "다윗의 추종자들은, 그를 무엇에 비유하며 꺼지지 않도록 요청하고 있습니까? (사무엘하 21:17)",
+          answer: "이스라엘의 등불",
+          score: 200,
+          constraint: "no constraint",
+        },
+        {
+          question: "하나님의 형상대로 사람을 창조하시되 무엇으로 만드셨습니까? (창세기 1:27)",
+          answer: "남자와 여자",
+          score: 100,
+          constraint: "no constraint",
+        },
+        {
+          question: "하나님께서 이 세상을 창조하신 후, 바다의 물고기와 하늘의 새와 땅에 움직이는 모든 생물을 어떡하라 명하셨습니까? (창세기 1:28)",
+          answer: "다스리라",
+          score: 300,
+          constraint: "no constraint",
+        },
+        {
+          question: "언어가 하나인 백성들이 동방으로 옮겨가다 무엇을 만나 거류합니까? (창세기 11:2)",
+          answer: "시날 평지",
+          score: 200,
+          constraint: "no constraint",
+        },
+        {
+          question: "온 지면에 흩어짐을 면하기 위해 무엇과 무엇을 만듭니까? (창세기 11:4)",
+          answer: "성읍과 탑",
+          score: 300,
+          constraint: "no constraint",
+        },
+        {
+          question: "온 땅의 언어를 혼잡하게 하셨다는 의미의 단어는 무엇입니까? (창세기 11:9)",
+          answer: "바벨",
+          score: 100,
+          constraint: "no constraint",
+        },
+        {
+          question: "롯이 어디에 들어갈 때 해가 돋았습니까? (창세기 19:23)",
+          answer: "소알",
+          score: 200,
+          constraint: "no constraint",
+        },
+        {
+          question: "소돔과 고모라에 무엇이 비같이 내렸습니까? (창세기 19:24)",
+          answer: "유황과 불",
+          score: 100,
+          constraint: "no constraint",
+        },
+        {
+          question: "피난길에 뒤를 돌아본 롯의 아내는 무엇이 되었습니까? (창세기 19:26)",
+          answer: "소금기둥",
+          score: 100,
+          constraint: "새내기",
+        },
+        {
+          question: "번외문제: 지난 2월 12-14일까지 동계수련회가 개최되었습니다. 어디에서 진행했을까요?",
+          answer: "세계로교회 세계로기도원",
+          score: 200,
+          constraint: "no constraint",
+        },
+        {
+          question: "번외문제: 2026년 사순절의 첫 시작, 재의 수요일은 언제였습니까?",
+          answer: "2026년 2월 18일(수)",
+          score: 300,
+          constraint: "no constraint",
+        },
+        {
+          question: "번외문제: 매주 금요일 저녁 7시 30분에 청년들이 모여 기도하는 모임은 무엇인가요?",
+          answer: "코람데오 기도회",
+          score: 100,
+          constraint: "2026 새가족",
+        },
+        {
+          question: "번외문제: 지난 6월 13일(토) 청년부에서 국내순교지 탐방을 행했습니다. 이때 방문한 2곳은 어디일까요?",
+          answer: "서문시장, 청라언덕",
+          score: 300,
+          constraint: "no constraint",
+        },
+        {
+          question: "이모지 문제: 다음 이모지가 나타내는 찬양 제목은 무엇입니까?",
+          answer: "안개속에",
+          score: 100,
+          constraint: "no constraint",
+          imageSrc: "emoji-slides/slide-002.png",
+        },
+        {
+          question: "이모지 문제: 다음 이모지가 나타내는 찬양 제목은 무엇입니까?",
+          answer: "말씀으로 우리 길 비추시네",
+          score: 200,
+          constraint: "no constraint",
+          imageSrc: "emoji-slides/slide-004.png",
+        },
+        {
+          question: "이모지 문제: 다음 이모지가 나타내는 찬양 제목은 무엇입니까?",
+          answer: "모든 민족과 방언들 가운데",
+          score: 300,
+          constraint: "no constraint",
+          imageSrc: "emoji-slides/slide-006.png",
+        },
+        {
+          question: "이모지 문제: 다음 이모지가 나타내는 찬양 제목은 무엇입니까?",
+          answer: "놀라우신 은혜",
+          score: 100,
+          constraint: "no constraint",
+          imageSrc: "emoji-slides/slide-008.png",
+        },
+        {
+          question: "이모지 문제: 다음 이모지가 나타내는 찬양 제목은 무엇입니까?",
+          answer: "주의 자비가 내려와",
+          score: 100,
+          constraint: "no constraint",
+          imageSrc: "emoji-slides/slide-010.png",
+        },
+        {
+          question: "이모지 문제: 다음 이모지가 나타내는 찬양 제목은 무엇입니까?",
+          answer: "love never fails(여호와께 돌아가자)",
+          score: 300,
+          constraint: "no constraint",
+          imageSrc: "emoji-slides/slide-012.png",
+        },
+        {
+          question: "이모지 문제: 다음 이모지가 나타내는 찬양 제목은 무엇입니까?",
+          answer: "하늘 위에 주님밖에",
+          score: 100,
+          constraint: "no constraint",
+          imageSrc: "emoji-slides/slide-014.png",
+        },
+        {
+          question: "이모지 문제: 다음 이모지가 나타내는 찬양 제목은 무엇입니까?",
+          answer: "sing sing sing",
+          score: 100,
+          constraint: "no constraint",
+          imageSrc: "emoji-slides/slide-016.png",
+        },
+        {
+          question: "이모지 문제: 다음 이모지가 나타내는 찬양 제목은 무엇입니까?",
+          answer: "성령의 불타는 교회",
+          score: 200,
+          constraint: "no constraint",
+          imageSrc: "emoji-slides/slide-018.png",
+        },
+        {
+          question: "이모지 문제: 다음 이모지가 나타내는 찬양 제목은 무엇입니까?",
+          answer: "우리는 주의 움직이는 교회",
+          score: 200,
+          constraint: "no constraint",
+          imageSrc: "emoji-slides/slide-020.png",
+        },
+        {
+          question: "이모지 문제: 다음 이모지가 나타내는 찬양 제목은 무엇입니까?",
+          answer: "주 발 앞에 나 엎드려",
+          score: 200,
+          constraint: "no constraint",
+          imageSrc: "emoji-slides/slide-022.png",
+        },
+        {
+          question: "이모지 문제: 다음 이모지가 나타내는 찬양 제목은 무엇입니까?",
+          answer: "오직 예수",
+          score: 100,
+          constraint: "no constraint",
+          imageSrc: "emoji-slides/slide-024.png",
+        },
+        {
+          question: "이모지 문제: 다음 이모지가 나타내는 찬양 제목은 무엇입니까?",
+          answer: "지금은 엘리야 때처럼",
+          score: 300,
+          constraint: "no constraint",
+          imageSrc: "emoji-slides/slide-026.png",
+        },
+        {
+          question: "이모지 문제: 다음 이모지가 나타내는 찬양 제목은 무엇입니까?",
+          answer: "돌아서지 않으리",
+          score: 200,
+          constraint: "no constraint",
+          imageSrc: "emoji-slides/slide-028.png",
+        },
+        {
+          question: "이모지 문제: 다음 이모지가 나타내는 찬양 제목은 무엇입니까?",
+          answer: "주님의 사랑",
+          score: 100,
+          constraint: "no constraint",
+          imageSrc: "emoji-slides/slide-030.png",
+        },
+        {
+          question: "이모지 문제: 다음 이모지가 나타내는 찬양 제목은 무엇입니까?",
+          answer: "광야를 지나며",
+          score: 100,
+          constraint: "no constraint",
+          imageSrc: "emoji-slides/slide-032.png",
+        },
+        {
+          question: "이모지 문제: 다음 이모지가 나타내는 찬양 제목은 무엇입니까?",
+          answer: "사자와 어린 양",
+          score: 100,
+          constraint: "no constraint",
+          imageSrc: "emoji-slides/slide-034.png",
+        },
+        {
+          question: "이모지 문제: 다음 이모지가 나타내는 찬양 제목은 무엇입니까?",
+          answer: "푯대를 향하여",
+          score: 200,
+          constraint: "no constraint",
+          imageSrc: "emoji-slides/slide-036.png",
+        },
+        {
+          question: "이모지 문제: 다음 이모지가 나타내는 찬양 제목은 무엇입니까?",
+          answer: "물이 바다 덮음같이",
+          score: 200,
+          constraint: "no constraint",
+          imageSrc: "emoji-slides/slide-038.png",
+        },
+        {
+          question: "이모지 문제: 다음 이모지가 나타내는 찬양 제목은 무엇입니까?",
+          answer: "모든 열방 주 볼 때까지",
+          score: 300,
+          constraint: "no constraint",
+          imageSrc: "emoji-slides/slide-040.png",
+        },
+        {
+          question: "이모지 문제: 다음 이모지가 나타내는 찬양 제목은 무엇입니까?",
+          answer: "나로부터 시작되리",
+          score: 200,
+          constraint: "no constraint",
+          imageSrc: "emoji-slides/slide-042.png",
+        },
+        {
+          question: "이모지 문제: 다음 이모지가 나타내는 찬양 제목은 무엇입니까?",
+          answer: "주님의 마음 있는 곳",
+          score: 200,
+          constraint: "no constraint",
+          imageSrc: "emoji-slides/slide-044.png",
+        },
+        {
+          question: "이모지 문제: 다음 이모지가 나타내는 찬양 제목은 무엇입니까?",
+          answer: "주를 찾는 모든 자들이",
+          score: 200,
+          constraint: "no constraint",
+          imageSrc: "emoji-slides/slide-046.png",
+        },
+        {
+          question: "이모지 문제: 다음 이모지가 나타내는 찬양 제목은 무엇입니까?",
+          answer: "낮은 곳으로",
+          score: 100,
+          constraint: "no constraint",
+          imageSrc: "emoji-slides/slide-048.png",
+        },
+        {
+          question: "이모지 문제: 다음 이모지가 나타내는 찬양 제목은 무엇입니까?",
+          answer: "나의 한숨을 바꾸셨네",
+          score: 200,
+          constraint: "no constraint",
+          imageSrc: "emoji-slides/slide-050.png",
+        },
+        {
+          question: "이모지 문제: 다음 이모지가 나타내는 찬양 제목은 무엇입니까?",
+          answer: "주를 바라보며",
+          score: 100,
+          constraint: "no constraint",
+          imageSrc: "emoji-slides/slide-052.png",
+        },
+        {
+          question: "이모지 문제: 다음 이모지가 나타내는 찬양 제목은 무엇입니까?",
+          answer: "멈출 수 없네",
+          score: 200,
+          constraint: "no constraint",
+          imageSrc: "emoji-slides/slide-054.png",
+        },
+        {
+          question: "이모지 문제: 다음 이모지가 나타내는 찬양 제목은 무엇입니까?",
+          answer: "Way maker",
+          score: 100,
+          constraint: "no constraint",
+          imageSrc: "emoji-slides/slide-056.png",
+        },
+        {
+          question: "이모지 문제: 다음 이모지가 나타내는 찬양 제목은 무엇입니까?",
+          answer: "부르신 곳에서",
+          score: 100,
+          constraint: "no constraint",
+          imageSrc: "emoji-slides/slide-058.png",
+        },
+        {
+          question: "이모지 문제: 다음 이모지가 나타내는 찬양 제목은 무엇입니까?",
+          answer: "어둔 날 다 지나고",
+          score: 200,
+          constraint: "no constraint",
+          imageSrc: "emoji-slides/slide-060.png",
+        },
+        {
+          type: "charades",
+          topic: "직업 1",
+          question: "몸으로 말해요: 직업 1",
+          answer: "10개 제시어를 몸짓으로 설명합니다.",
+          score: 300,
+          constraint: "no constraint",
+          keywords: ["의사", "경찰", "소방관", "요리사", "선생님", "가수", "운전기사", "미용사", "농부", "사진작가"],
+        },
+        {
+          type: "charades",
+          topic: "직업 2",
+          question: "몸으로 말해요: 직업 2",
+          answer: "10개 제시어를 몸짓으로 설명합니다.",
+          score: 300,
+          constraint: "no constraint",
+          keywords: ["간호사", "목사", "운동선수", "배우", "화가", "목수", "택배기사", "비행기 조종사", "마술사", "경비원"],
+        },
+        {
+          type: "charades",
+          topic: "스포츠 1",
+          question: "몸으로 말해요: 스포츠 1",
+          answer: "10개 제시어를 몸짓으로 설명합니다.",
+          score: 300,
+          constraint: "no constraint",
+          keywords: ["축구", "야구", "농구", "배구", "수영", "달리기", "양궁", "볼링", "탁구", "태권도"],
+        },
+        {
+          type: "charades",
+          topic: "스포츠 2",
+          question: "몸으로 말해요: 스포츠 2",
+          answer: "10개 제시어를 몸짓으로 설명합니다.",
+          score: 300,
+          constraint: "no constraint",
+          keywords: ["스키", "스케이트", "테니스", "골프", "복싱", "줄넘기", "씨름", "역도", "자전거", "배드민턴"],
+        },
+        {
+          type: "charades",
+          topic: "속담 1",
+          question: "몸으로 말해요: 속담 1",
+          answer: "10개 제시어를 몸짓으로 설명합니다.",
+          score: 300,
+          constraint: "no constraint",
+          keywords: [
+            "가는 말이 고와야 오는 말이 곱다",
+            "낮말은 새가 듣고 밤말은 쥐가 듣는다",
+            "누워서 침 뱉기",
+            "등잔 밑이 어둡다",
+            "소 잃고 외양간 고친다",
+            "식은 죽 먹기",
+            "원숭이도 나무에서 떨어진다",
+            "하늘의 별 따기",
+            "호랑이도 제 말 하면 온다",
+            "티끌 모아 태산",
+          ],
+        },
+        {
+          type: "charades",
+          topic: "속담 2",
+          question: "몸으로 말해요: 속담 2",
+          answer: "10개 제시어를 몸짓으로 설명합니다.",
+          score: 300,
+          constraint: "no constraint",
+          keywords: [
+            "개구리 올챙이 적 생각 못 한다",
+            "고래 싸움에 새우 등 터진다",
+            "김칫국부터 마신다",
+            "도토리 키 재기",
+            "바늘 도둑이 소 도둑 된다",
+            "백지장도 맞들면 낫다",
+            "서당 개 삼 년이면 풍월을 읊는다",
+            "울며 겨자 먹기",
+            "작은 고추가 맵다",
+            "콩 심은 데 콩 나고 팥 심은 데 팥 난다",
+          ],
+        },
+        {
+          type: "charades",
+          topic: "동물 1",
+          question: "몸으로 말해요: 동물 1",
+          answer: "10개 제시어를 몸짓으로 설명합니다.",
+          score: 300,
+          constraint: "no constraint",
+          keywords: ["사자", "호랑이", "코끼리", "기린", "원숭이", "토끼", "강아지", "고양이", "펭귄", "캥거루"],
+        },
+        {
+          type: "charades",
+          topic: "동물 2",
+          question: "몸으로 말해요: 동물 2",
+          answer: "10개 제시어를 몸짓으로 설명합니다.",
+          score: 300,
+          constraint: "no constraint",
+          keywords: ["악어", "돌고래", "상어", "문어", "거북이", "말", "돼지", "닭", "뱀", "나비"],
+        },
+      ];
+      let problems = buildNumberedProblems();
+
+      const state = {
+        currentProblem: null,
+        completed: loadCompletedProblems(),
+        charades: {
+          index: 0,
+          remainingSeconds: 120,
+          timerId: null,
+        },
+      };
+
+      const homeScreen = document.querySelector("#homeScreen");
+      const problemScreen = document.querySelector("#problemScreen");
+      const board = document.querySelector("#problemBoard");
+      const emptyState = document.querySelector("#emptyState");
+      const progressPill = document.querySelector("#progressPill");
+      const resetButton = document.querySelector("#resetButton");
+      const problemNumber = document.querySelector("#problemNumber");
+      const constraintText = document.querySelector("#constraintText");
+      const problemTitle = document.querySelector("#problemTitle");
+      const problemText = document.querySelector("#problemText");
+      const problemMedia = document.querySelector("#problemMedia");
+      const answerPanel = document.querySelector("#answerPanel");
+      const answerText = document.querySelector("#answerText");
+      const scoreText = document.querySelector("#scoreText");
+      const showAnswerButton = document.querySelector("#showAnswerButton");
+      const completeButton = document.querySelector("#completeButton");
+
+      renderHome();
+
+      resetButton.addEventListener("click", resetProgress);
+      document.querySelector("[data-reset]").addEventListener("click", resetProgress);
+      showAnswerButton.addEventListener("click", showAnswer);
+      completeButton.addEventListener("click", completeCurrentProblem);
+
+      function loadCompletedProblems() {
+        try {
+          const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+          return new Set(saved);
+        } catch {
+          return new Set();
+        }
+      }
+
+      function saveCompletedProblems() {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify([...state.completed]));
+      }
+
+      function shuffleProblems(items) {
+        const copied = [...items];
+
+        for (let index = copied.length - 1; index > 0; index -= 1) {
+          const randomIndex = Math.floor(Math.random() * (index + 1));
+          [copied[index], copied[randomIndex]] = [copied[randomIndex], copied[index]];
+        }
+
+        return copied;
+      }
+
+      function buildNumberedProblems() {
+        return shuffleProblems(problemContents).map((content, index) => {
+          const number = index + 1;
+
+          return {
+            ...content,
+            id: number,
+            title: `문제 ${number}`,
+          };
+        });
+      }
+
+      function renderHome() {
+        const remainingProblems = problems.filter((problem) => !state.completed.has(problem.id));
+        const remainingCount = remainingProblems.length;
+
+        progressPill.textContent = `${remainingCount} / ${problems.length} 남음`;
+        board.innerHTML = "";
+
+        problems.forEach((problem) => {
+          if (state.completed.has(problem.id)) {
+            const slot = document.createElement("div");
+            slot.className = "problem-slot";
+            slot.setAttribute("aria-hidden", "true");
+            board.append(slot);
+            return;
+          }
+
+          const button = document.createElement("button");
+          button.className = "problem-dot";
+          button.type = "button";
+          button.textContent = problem.id;
+          button.setAttribute("aria-label", `${problem.title} 열기`);
+          button.addEventListener("click", () => openProblem(problem.id));
+          board.append(button);
+        });
+
+        emptyState.style.display = remainingCount > 0 ? "none" : "block";
+      }
+
+      function openProblem(problemId) {
+        const problem = problems.find((item) => item.id === problemId);
+
+        if (!problem) {
+          return;
+        }
+
+        stopCharadesTimer();
+        state.currentProblem = problem;
+        resetCharadesState();
+        const problemScore = getProblemScore(problem);
+        const constraintLabel = getConstraintLabel(problem.constraint);
+        const isCharades = isCharadesProblem(problem);
+        problemNumber.textContent = `${problem.id} / ${problems.length} · ${problemScore}점`;
+        constraintText.hidden = !constraintLabel;
+        constraintText.textContent = constraintLabel ? `${constraintLabel}만 풀어주세요` : "";
+        problemTitle.textContent = problem.title;
+        renderProblemContent(problem);
+        answerText.textContent = problem.answer;
+        scoreText.textContent = `${problemScore}점`;
+        answerPanel.classList.remove("visible");
+        showAnswerButton.hidden = isCharades;
+        completeButton.hidden = !isCharades;
+        showScreen("problem");
+        if (isCharades) {
+          problemText.querySelector("[data-charades-start]")?.focus();
+        } else {
+          showAnswerButton.focus();
+        }
+      }
+
+      function renderProblemContent(problem) {
+        problemText.className = "problem-text";
+        problemText.replaceChildren();
+        problemMedia.replaceChildren();
+        problemMedia.classList.remove("has-answer-overlay");
+        problemMedia.before(answerPanel);
+
+        if (isCharadesProblem(problem)) {
+          renderCharadesProblem(problem);
+          return;
+        }
+
+        const question = createTextElement("div", "question-main", problem.question);
+        problemText.append(question);
+
+        if (problem.imageSrc) {
+          const image = document.createElement("img");
+          image.className = "question-image";
+          image.src = problem.imageSrc;
+          image.alt = problem.question;
+          problemMedia.classList.add("has-answer-overlay");
+          problemMedia.append(image);
+          problemMedia.append(answerPanel);
+        }
+      }
+
+      function renderCharadesProblem(problem) {
+        const stage = document.createElement("div");
+        stage.className = "charades-stage";
+
+        const top = document.createElement("div");
+        top.className = "charades-top";
+        top.append(
+          createTextElement("div", "charades-topic", `몸으로 말해요 · ${problem.topic}`),
+          createTextElement("div", "charades-timer", formatTimer(state.charades.remainingSeconds)),
+        );
+        top.lastElementChild.dataset.charadesTimer = "";
+
+        const card = document.createElement("div");
+        card.className = "charades-card";
+        const keyword = createTextElement("div", "charades-keyword", "");
+        keyword.dataset.charadesKeyword = "";
+        card.append(keyword);
+
+        const progress = createTextElement("div", "charades-progress", "");
+        progress.dataset.charadesProgress = "";
+
+        const controls = document.createElement("div");
+        controls.className = "charades-controls";
+
+        const startButton = createTextElement("button", "primary-btn", "시작");
+        startButton.type = "button";
+        startButton.dataset.charadesStart = "";
+        startButton.addEventListener("click", startCharadesTimer);
+
+        const resetButton = createTextElement("button", "secondary-btn", "타이머 초기화");
+        resetButton.type = "button";
+        resetButton.addEventListener("click", resetCharadesTimer);
+
+        const previousButton = createTextElement("button", "secondary-btn", "이전");
+        previousButton.type = "button";
+        previousButton.addEventListener("click", () => moveCharadesKeyword(-1));
+
+        const nextButton = createTextElement("button", "primary-btn", "다음");
+        nextButton.type = "button";
+        nextButton.addEventListener("click", () => moveCharadesKeyword(1));
+
+        const restartButton = createTextElement("button", "secondary-btn", "첫 제시어");
+        restartButton.type = "button";
+        restartButton.addEventListener("click", () => {
+          state.charades.index = 0;
+          updateCharadesView();
+        });
+
+        controls.append(startButton, resetButton, previousButton, nextButton, restartButton);
+        stage.append(top, card, progress, controls);
+        problemText.append(stage);
+        updateCharadesView();
+      }
+
+      function createTextElement(tagName, className, text) {
+        const element = document.createElement(tagName);
+        element.className = className;
+        element.textContent = text;
+        return element;
+      }
+
+      function isCharadesProblem(problem) {
+        return problem.type === "charades" && Array.isArray(problem.keywords);
+      }
+
+      function resetCharadesState() {
+        state.charades.index = 0;
+        state.charades.remainingSeconds = 120;
+      }
+
+      function moveCharadesKeyword(direction) {
+        const problem = state.currentProblem;
+
+        if (!isCharadesProblem(problem)) {
+          return;
+        }
+
+        const lastIndex = problem.keywords.length - 1;
+        state.charades.index = Math.min(Math.max(state.charades.index + direction, 0), lastIndex);
+        updateCharadesView();
+      }
+
+      function updateCharadesView() {
+        const problem = state.currentProblem;
+
+        if (!isCharadesProblem(problem)) {
+          return;
+        }
+
+        const keyword = problem.keywords[state.charades.index] || "";
+        const keywordElement = problemText.querySelector("[data-charades-keyword]");
+        const progressElement = problemText.querySelector("[data-charades-progress]");
+        const timerElement = problemText.querySelector("[data-charades-timer]");
+
+        if (keywordElement) {
+          keywordElement.textContent = keyword;
+        }
+
+        if (progressElement) {
+          progressElement.textContent = `${state.charades.index + 1} / ${problem.keywords.length}`;
+        }
+
+        if (timerElement) {
+          timerElement.textContent = formatTimer(state.charades.remainingSeconds);
+        }
+      }
+
+      function startCharadesTimer() {
+        if (state.charades.timerId) {
+          return;
+        }
+
+        if (state.charades.remainingSeconds <= 0) {
+          state.charades.remainingSeconds = 120;
+          updateCharadesView();
+        }
+
+        state.charades.timerId = window.setInterval(() => {
+          state.charades.remainingSeconds -= 1;
+          updateCharadesView();
+
+          if (state.charades.remainingSeconds <= 0) {
+            stopCharadesTimer();
+          }
+        }, 1000);
+      }
+
+      function resetCharadesTimer() {
+        stopCharadesTimer();
+        state.charades.remainingSeconds = 120;
+        updateCharadesView();
+      }
+
+      function stopCharadesTimer() {
+        if (!state.charades.timerId) {
+          return;
+        }
+
+        window.clearInterval(state.charades.timerId);
+        state.charades.timerId = null;
+      }
+
+      function formatTimer(totalSeconds) {
+        const safeSeconds = Math.max(totalSeconds, 0);
+        const minutes = Math.floor(safeSeconds / 60);
+        const seconds = String(safeSeconds % 60).padStart(2, "0");
+        return `${minutes}:${seconds}`;
+      }
+
+      function getProblemScore(problem) {
+        const score = Number(problem.score);
+        return [100, 200, 300].includes(score) ? score : 100;
+      }
+
+      function getConstraintLabel(constraint) {
+        const labels = {
+          "2026 새가족": "2026 새가족",
+          "새내기": "새내기",
+          "리더": "리더",
+        };
+
+        return labels[constraint] || "";
+      }
+
+      function showAnswer() {
+        answerPanel.classList.add("visible");
+        showAnswerButton.hidden = true;
+        completeButton.hidden = false;
+        completeButton.focus();
+      }
+
+      function completeCurrentProblem() {
+        if (!state.currentProblem) {
+          return;
+        }
+
+        stopCharadesTimer();
+        state.completed.add(state.currentProblem.id);
+        saveCompletedProblems();
+        state.currentProblem = null;
+        renderHome();
+        showScreen("home");
+      }
+
+      function resetProgress() {
+        stopCharadesTimer();
+        state.completed.clear();
+        saveCompletedProblems();
+        problems = buildNumberedProblems();
+        state.currentProblem = null;
+        renderHome();
+        showScreen("home");
+      }
+
+      function showScreen(screenName) {
+        const isHome = screenName === "home";
+        homeScreen.classList.toggle("active", isHome);
+        problemScreen.classList.toggle("active", !isHome);
+
+        if (isHome) {
+          stopCharadesTimer();
+          renderHome();
+        }
+      }
+    </script>
+  </body>
+</html>
