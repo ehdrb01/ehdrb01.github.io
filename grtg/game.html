@@ -16,6 +16,9 @@
         --accent: #1c6f67;
         --accent-strong: #0e4f49;
         --answer: #7b3f00;
+        --chance: #b34518;
+        --chance-strong: #76290b;
+        --chance-soft: #fff1d8;
         --shadow: 0 18px 45px rgba(33, 37, 41, 0.12);
       }
 
@@ -228,6 +231,10 @@
         font-weight: 900;
       }
 
+      .problem-number.is-chance-reward {
+        color: var(--chance-strong);
+      }
+
       .constraint-text {
         margin-top: 8px;
         color: var(--accent-strong);
@@ -248,6 +255,13 @@
         border-radius: 8px;
         background: var(--surface);
         box-shadow: var(--shadow);
+      }
+
+      .problem-panel.is-chance-reward {
+        border-color: rgba(179, 69, 24, 0.34);
+        background:
+          linear-gradient(180deg, rgba(255, 248, 237, 0.96), rgba(255, 255, 255, 0.98)),
+          var(--surface);
       }
 
       .problem-text {
@@ -417,6 +431,67 @@
         text-align: center;
       }
 
+      .reward-banner {
+        display: grid;
+        grid-template-columns: auto minmax(0, 1fr);
+        align-items: center;
+        gap: 14px;
+        padding: 14px 16px;
+        border: 2px solid rgba(179, 69, 24, 0.28);
+        border-radius: 8px;
+        background:
+          linear-gradient(135deg, rgba(255, 255, 255, 0.88), rgba(255, 232, 190, 0.84)),
+          var(--chance-soft);
+        box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.72);
+      }
+
+      .reward-mark {
+        display: grid;
+        width: 54px;
+        aspect-ratio: 1;
+        place-items: center;
+        border-radius: 999px;
+        background: var(--chance-strong);
+        color: #fff;
+        font-size: 1.6rem;
+        font-weight: 950;
+        line-height: 1;
+      }
+
+      .reward-copy {
+        display: grid;
+        gap: 4px;
+        min-width: 0;
+      }
+
+      .reward-copy strong {
+        color: var(--chance-strong);
+        font-size: clamp(1.18rem, 2.4vw, 1.8rem);
+        font-weight: 950;
+        line-height: 1.18;
+        word-break: keep-all;
+      }
+
+      .reward-copy span {
+        color: #643814;
+        font-size: clamp(0.95rem, 1.8vw, 1.16rem);
+        font-weight: 850;
+        line-height: 1.4;
+        word-break: keep-all;
+      }
+
+      .charades-stage.is-chance-reward .charades-topic,
+      .charades-stage.is-chance-reward .charades-keyword,
+      .charades-stage.is-chance-reward .charades-progress {
+        color: var(--chance-strong);
+      }
+
+      .charades-stage.is-chance-reward .charades-timer {
+        border-color: rgba(179, 69, 24, 0.28);
+        background: #fff8ec;
+        color: var(--chance-strong);
+      }
+
       .charades-card {
         display: grid;
         min-height: clamp(220px, 34vh, 380px);
@@ -430,6 +505,13 @@
         text-align: center;
       }
 
+      .charades-stage.is-chance-reward .charades-card {
+        border-color: rgba(179, 69, 24, 0.34);
+        background:
+          radial-gradient(circle at 50% 0%, rgba(255, 204, 118, 0.56), transparent 50%),
+          linear-gradient(135deg, #fffdf8, #fff0d9);
+      }
+
       .charades-keyword {
         color: var(--accent-strong);
         font-size: clamp(3rem, 10vw, 7.2rem);
@@ -440,8 +522,12 @@
 
       .charades-controls {
         display: grid;
-        grid-template-columns: repeat(5, minmax(0, 1fr));
+        grid-template-columns: repeat(auto-fit, minmax(118px, 1fr));
         gap: 10px;
+      }
+
+      .charades-controls button {
+        white-space: nowrap;
       }
 
       .charades-progress {
@@ -530,6 +616,13 @@
         color: var(--answer);
         font-size: clamp(1.4rem, 3vw, 2.5rem);
         font-weight: 950;
+      }
+
+      .score-text.is-chance-reward {
+        border-radius: 8px;
+        background: rgba(179, 69, 24, 0.12);
+        color: var(--chance-strong);
+        text-align: center;
       }
 
       .actions {
@@ -634,6 +727,14 @@
 
         .charades-top {
           display: grid;
+        }
+
+        .reward-banner {
+          grid-template-columns: 1fr;
+        }
+
+        .reward-mark {
+          width: 46px;
         }
       }
     </style>
@@ -1108,6 +1209,84 @@
           constraint: "no constraint",
         },
         {
+          question: "오늘 청년부 예배에서 찬양한 곡 중 가장 먼저 찬양한 곡의 이름은?",
+          answer: "예수 열방의 소망",
+          score: 200,
+          constraint: "no constraint",
+        },
+        {
+          question: "진행하는 김동규 청년이 나온 고등학교는 어디일까요?",
+          answer: "학성고등학교",
+          score: 200,
+          constraint: "no constraint",
+        },
+        {
+          question: "저번 주 교회 점심 메뉴는 무엇이었을까요?",
+          answer: "삼계탕",
+          score: 200,
+          constraint: "no constraint",
+        },
+        {
+          question: "소년부 여름성경학교 일정이 언제일까요?",
+          answer: "7월 27-28일",
+          score: 200,
+          constraint: "no constraint",
+        },
+        {
+          question: "넌센스 문제: 세상에서 가장 뜨거운 바다는?",
+          answer: "열바다",
+          score: 100,
+          constraint: "no constraint",
+        },
+        {
+          question: "넌센스 문제: 왕이 넘어지면 무엇이 될까요?",
+          answer: "킹콩",
+          score: 100,
+          constraint: "no constraint",
+        },
+        {
+          question: "넌센스 문제: 오리가 얼면 무엇이 될까요?",
+          answer: "언덕",
+          score: 100,
+          constraint: "no constraint",
+        },
+        {
+          question: "넌센스 문제: 세상에서 가장 빠른 닭은?",
+          answer: "후다닥",
+          score: 100,
+          constraint: "no constraint",
+        },
+        {
+          question: "넌센스 문제: 차가 깜짝 놀라면 무엇이 될까요?",
+          answer: "카놀라유",
+          score: 200,
+          constraint: "no constraint",
+        },
+        {
+          question: "넌센스 문제: 사과가 웃으면 무엇이 될까요?",
+          answer: "풋사과",
+          score: 200,
+          constraint: "no constraint",
+        },
+        {
+          question: "넌센스 문제: 딸기가 회사에서 잘리면 무엇이 될까요?",
+          answer: "딸기잼",
+          score: 200,
+          constraint: "no constraint",
+        },
+        {
+          question: "넌센스 문제: 소가 웃으면 어떻게 웃을까요?",
+          answer: "우하하",
+          score: 100,
+          constraint: "no constraint",
+        },
+        {
+          question: "넌센스 문제: 세상에서 가장 착한 사자는?",
+          answer: "자원봉사자",
+          score: 300,
+          constraint: "no constraint",
+        },
+        {
           question: "이모지 문제: 다음 이모지가 나타내는 찬양 제목은 무엇입니까?",
           answer: "안개속에",
           score: 100,
@@ -1324,16 +1503,40 @@
           answer: "10개 제시어를 몸짓으로 설명합니다.",
           score: 300,
           constraint: "no constraint",
-          keywords: ["직업 1", "의사", "경찰", "소방관", "요리사", "선생님", "가수", "운전기사", "미용사", "농부", "사진작가"],
+          keywords: [
+            "직업 1",
+            "응급실 당직 의사",
+            "잠복근무 중인 형사",
+            "화재 현장 지휘하는 소방대장",
+            "오마카세 생선 손질 셰프",
+            "수학여행 인솔 교사",
+            "앙코르 무대 기다리는 아이돌",
+            "새벽 배송 택배 기사",
+            "강아지 털 깎는 애견 미용사",
+            "비닐하우스 토마토 농부",
+            "결혼식 단체사진 찍는 사진작가",
+          ],
         },
         {
           type: "charades",
           topic: "직업 2",
           question: "몸으로 말해요: 직업 2",
-          answer: "10개 제시어를 몸짓으로 설명합니다.",
-          score: 300,
+          answer: "5개 이상 맞추면 점수 바꾸기 찬스",
+          reward: "score-change-chance",
           constraint: "no constraint",
-          keywords: ["직업 2", "간호사", "목사", "운동선수", "배우", "화가", "목수", "택배기사", "비행기 조종사", "마술사", "경비원"],
+          keywords: [
+            "직업 2",
+            "SK 하이닉스 반도체 파트 직원",
+            "수술실 순환 간호사",
+            "새벽 예배 준비하는 목사",
+            "재활 훈련 돕는 국가대표 코치",
+            "커튼콜 받는 뮤지컬 배우",
+            "벽화 그리는 공공미술 작가",
+            "붙박이장 설치하는 목수",
+            "공항 관제탑 항공 관제사",
+            "클로즈업 카드 마술사",
+            "백화점 야간 보안요원",
+          ],
         },
         {
           type: "charades",
@@ -1342,16 +1545,40 @@
           answer: "10개 제시어를 몸짓으로 설명합니다.",
           score: 300,
           constraint: "no constraint",
-          keywords: ["스포츠 1", "축구", "야구", "농구", "배구", "수영", "달리기", "양궁", "볼링", "탁구", "태권도"],
+          keywords: [
+            "스포츠 1",
+            "승부차기 준비하는 축구 선수",
+            "9회 말 투아웃 투수",
+            "자유투 던지는 농구 선수",
+            "블로킹 뛰는 배구 센터",
+            "접영 마지막 15m 수영 선수",
+            "100m 출발선의 단거리 선수",
+            "결승 화살 쏘는 양궁 선수",
+            "스페어 처리하는 볼링 선수",
+            "드라이브 거는 탁구 선수",
+            "돌려차기 시도하는 태권도 선수",
+          ],
         },
         {
           type: "charades",
           topic: "스포츠 2",
           question: "몸으로 말해요: 스포츠 2",
-          answer: "10개 제시어를 몸짓으로 설명합니다.",
-          score: 300,
+          answer: "5개 이상 맞추면 점수 바꾸기 찬스",
+          reward: "score-change-chance",
           constraint: "no constraint",
-          keywords: ["스포츠 2", "스키", "스케이트", "테니스", "골프", "복싱", "줄넘기", "씨름", "역도", "자전거", "배드민턴"],
+          keywords: [
+            "스포츠 2",
+            "알파인 회전 경기 스키 선수",
+            "쇼트트랙 코너 도는 선수",
+            "서브 넣는 테니스 선수",
+            "벙커샷 하는 골프 선수",
+            "카운터펀치 노리는 복싱 선수",
+            "2단 뛰기 줄넘기 선수",
+            "들배지기 시도하는 씨름 선수",
+            "용상 마지막 시도하는 역도 선수",
+            "오르막 스프린트 자전거 선수",
+            "헤어핀 받는 배드민턴 선수",
+          ],
         },
         {
           type: "charades",
@@ -1377,8 +1604,8 @@
           type: "charades",
           topic: "속담 2",
           question: "몸으로 말해요: 속담 2",
-          answer: "10개 제시어를 몸짓으로 설명합니다.",
-          score: 300,
+          answer: "5개 이상 맞추면 점수 바꾸기 찬스",
+          reward: "score-change-chance",
           constraint: "no constraint",
           keywords: ["속담 2", 
             "개구리 올챙이 적 생각 못 한다",
@@ -1440,6 +1667,7 @@
       const scoreText = document.querySelector("#scoreText");
       const showAnswerButton = document.querySelector("#showAnswerButton");
       const completeButton = document.querySelector("#completeButton");
+      const problemPanel = document.querySelector(".problem-panel");
 
       renderHome();
 
@@ -1522,16 +1750,20 @@
         stopCharadesTimer();
         state.currentProblem = problem;
         resetCharadesState();
-        const problemScore = getProblemScore(problem);
+        const rewardLabel = getRewardLabel(problem);
+        const hasScoreChangeChance = isScoreChangeChance(problem);
         const constraintLabel = getConstraintLabel(problem.constraint);
         const isCharades = isCharadesProblem(problem);
-        problemNumber.textContent = `${problem.id} / ${problems.length} · ${problemScore}점`;
+        problemNumber.textContent = `${problem.id} / ${problems.length} · ${rewardLabel}`;
+        problemNumber.classList.toggle("is-chance-reward", hasScoreChangeChance);
+        problemPanel.classList.toggle("is-chance-reward", hasScoreChangeChance);
         constraintText.hidden = !constraintLabel;
         constraintText.textContent = constraintLabel ? `${constraintLabel}만 풀어주세요` : "";
         problemTitle.textContent = problem.title;
         renderProblemContent(problem);
         answerText.textContent = problem.answer;
-        scoreText.textContent = `${problemScore}점`;
+        scoreText.textContent = rewardLabel;
+        scoreText.classList.toggle("is-chance-reward", hasScoreChangeChance);
         answerPanel.classList.remove("visible");
         showAnswerButton.hidden = isCharades;
         completeButton.hidden = !isCharades;
@@ -1572,6 +1804,7 @@
       function renderCharadesProblem(problem) {
         const stage = document.createElement("div");
         stage.className = "charades-stage";
+        stage.classList.toggle("is-chance-reward", isScoreChangeChance(problem));
 
         const top = document.createElement("div");
         top.className = "charades-top";
@@ -1618,9 +1851,32 @@
         });
 
         controls.append(startButton, resetButton, previousButton, nextButton, restartButton);
-        stage.append(top, card, progress, controls);
+        stage.append(top);
+
+        if (isScoreChangeChance(problem)) {
+          stage.append(createScoreChangeBanner());
+        }
+
+        stage.append(card, progress, controls);
         problemText.append(stage);
         updateCharadesView();
+      }
+
+      function createScoreChangeBanner() {
+        const banner = document.createElement("div");
+        banner.className = "reward-banner";
+        banner.setAttribute("role", "note");
+
+        const mark = createTextElement("div", "reward-mark", "+/-");
+        const copy = document.createElement("div");
+        copy.className = "reward-copy";
+        copy.append(
+          createTextElement("strong", "", "5개 이상 맞추면 점수 바꾸기 찬스!"),
+          createTextElement("span", "", "성공 팀은 진행자 안내에 따라 팀 점수를 바꿔버릴 수 있습니다."),
+        );
+
+        banner.append(mark, copy);
+        return banner;
       }
 
       function createTextElement(tagName, className, text) {
@@ -1632,6 +1888,10 @@
 
       function isCharadesProblem(problem) {
         return problem.type === "charades" && Array.isArray(problem.keywords);
+      }
+
+      function isScoreChangeChance(problem) {
+        return problem.reward === "score-change-chance";
       }
 
       function resetCharadesState() {
@@ -1724,6 +1984,14 @@
       function getProblemScore(problem) {
         const score = Number(problem.score);
         return [100, 200, 300].includes(score) ? score : 100;
+      }
+
+      function getRewardLabel(problem) {
+        if (isScoreChangeChance(problem)) {
+          return "5개 이상 성공 시 점수 바꾸기 찬스";
+        }
+
+        return `${getProblemScore(problem)}점`;
       }
 
       function getConstraintLabel(constraint) {
