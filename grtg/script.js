@@ -5,18 +5,12 @@ const PARTICIPANTS = [
   "이동혁",
   "박초은",
   "김지혜",
-  "윤은비",
   "박연우",
   "김지영",
   "허신혜",
-  "김남욱",
-  "이환희",
   "고경민",
   "이효정",
-  "손한결",
-  "김지수",
   "박준수",
-  "김세령",
   "이예진",
   "이세은",
   "장영광",
@@ -25,12 +19,10 @@ const PARTICIPANTS = [
   "최재근",
   "양승권",
   "김동현",
-  "김종혁",
   "이찬희",
   "이준표",
   "이진성",
   "이정배",
-  "정수안",
   "황주원",
   "강서진",
   "이희재",
@@ -41,13 +33,19 @@ const PARTICIPANTS = [
   "김동규",
   "김동해",
   "김현우",
+  "김신영",
+  "노연교",
+  "김지훈",
+  "김지수(98)",
+  "김지수(02)",
+  "류태경",
+  "윤은비",
+  "이상준"
 ];
 
-const SEPARATE_GROUPS = [["윤은비", "손한결"], ["하경한", "이동혁"]];
+const LATE_PARTICIPANTS = ["박초은", "김지수(98)", "이찬희", "황주원", "류태경", "윤은비", "김지수(02)", "이상준"];
 
-const LATE_PARTICIPANTS = ["박초은", "김남욱", "김지수", "이찬희", "황주원"];
-
-const LEADER_BLOCKLIST = ["이환희"];
+const LEADER_BLOCKLIST = ["이희재", "김동규", "이세은", "박연우", "이예진", "박주은", "노연교", "조경찬", "장영광"];
 
 const MAX_ATTEMPTS = 900;
 
@@ -81,37 +79,14 @@ function shuffle(items) {
   return copied;
 }
 
-function makeForbiddenPairs(groups) {
-  const pairs = new Set();
-
-  groups.forEach((group) => {
-    group.forEach((person, index) => {
-      group.slice(index + 1).forEach((otherPerson) => {
-        pairs.add(pairKey(person, otherPerson));
-      });
-    });
-  });
-
-  return pairs;
-}
-
-function pairKey(first, second) {
-  return [first, second].sort().join("::");
-}
-
 function validateRoster() {
   const names = new Set(PARTICIPANTS);
   const duplicateNames = PARTICIPANTS.filter((name, index) => PARTICIPANTS.indexOf(name) !== index);
-  const unknownNames = SEPARATE_GROUPS.flat().filter((name) => !names.has(name));
   const unknownLateNames = LATE_PARTICIPANTS.filter((name) => !names.has(name));
   const unknownLeaderBlockedNames = LEADER_BLOCKLIST.filter((name) => !names.has(name));
 
   if (duplicateNames.length > 0) {
     console.warn("Duplicate participant names:", [...new Set(duplicateNames)]);
-  }
-
-  if (unknownNames.length > 0) {
-    console.warn("Unknown names in SEPARATE_GROUPS:", [...new Set(unknownNames)]);
   }
 
   if (unknownLateNames.length > 0) {
@@ -151,32 +126,23 @@ function clamp(value, min, max) {
   return Math.min(Math.max(value, min), max);
 }
 
-function buildGroups(targetSizes, forbiddenPairs) {
+function buildGroups(targetSizes) {
   const latePeople = new Set(LATE_PARTICIPANTS);
   const leaderBlockedPeople = new Set(LEADER_BLOCKLIST);
-  const conflictCounts = new Map();
   let bestGroups = null;
   let bestScore = Number.POSITIVE_INFINITY;
-
-  PARTICIPANTS.forEach((person) => {
-    const count = PARTICIPANTS.reduce((sum, otherPerson) => {
-      return sum + (forbiddenPairs.has(pairKey(person, otherPerson)) ? 1 : 0);
-    }, 0);
-    conflictCounts.set(person, count);
-  });
 
   for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt += 1) {
     const groups = targetSizes.map((size) => ({ targetSize: size, members: [] }));
     const orderedPeople = shuffle(PARTICIPANTS).sort((a, b) => {
       return (
-        conflictCounts.get(b) - conflictCounts.get(a) ||
         Number(isLeaderEligible(b, latePeople, leaderBlockedPeople)) -
           Number(isLeaderEligible(a, latePeople, leaderBlockedPeople)) ||
         Number(latePeople.has(b)) - Number(latePeople.has(a))
       );
     });
 
-    if (placePerson(orderedPeople, 0, groups, forbiddenPairs, latePeople, leaderBlockedPeople)) {
+    if (placePerson(orderedPeople, 0, groups, latePeople, leaderBlockedPeople)) {
       const candidateGroups = groups.map((group) =>
         orderMembersForLeadership(group.members, latePeople, leaderBlockedPeople),
       );
@@ -196,7 +162,7 @@ function buildGroups(targetSizes, forbiddenPairs) {
   return bestGroups;
 }
 
-function placePerson(people, personIndex, groups, forbiddenPairs, latePeople, leaderBlockedPeople) {
+function placePerson(people, personIndex, groups, latePeople, leaderBlockedPeople) {
   if (personIndex >= people.length) {
     return true;
   }
@@ -218,13 +184,13 @@ function placePerson(people, personIndex, groups, forbiddenPairs, latePeople, le
   for (const groupIndex of candidateIndexes) {
     const group = groups[groupIndex];
 
-    if (!canPlace(person, group, forbiddenPairs)) {
+    if (!canPlace(group)) {
       continue;
     }
 
     group.members.push(person);
 
-    if (placePerson(people, personIndex + 1, groups, forbiddenPairs, latePeople, leaderBlockedPeople)) {
+    if (placePerson(people, personIndex + 1, groups, latePeople, leaderBlockedPeople)) {
       return true;
     }
 
@@ -238,12 +204,8 @@ function remainingSpace(group) {
   return group.targetSize - group.members.length;
 }
 
-function canPlace(person, group, forbiddenPairs) {
-  if (group.members.length >= group.targetSize) {
-    return false;
-  }
-
-  return group.members.every((member) => !forbiddenPairs.has(pairKey(person, member)));
+function canPlace(group) {
+  return group.members.length < group.targetSize;
 }
 
 function countLateMembers(members, latePeople) {
@@ -414,8 +376,7 @@ function setStatus(kind, title, pillText) {
 
 function assignGroups() {
   const targetSizes = getTargetSizes();
-  const forbiddenPairs = makeForbiddenPairs(SEPARATE_GROUPS);
-  const groups = buildGroups(targetSizes, forbiddenPairs);
+  const groups = buildGroups(targetSizes);
 
   if (!groups) {
     state.groups = [];
