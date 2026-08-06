@@ -29,7 +29,6 @@ const PARTICIPANTS = [
   "박주은",
   "장은기",
   "조기진",
-  "조경찬",
   "김동규",
   "김동해",
   "김현우",
@@ -45,7 +44,7 @@ const PARTICIPANTS = [
 
 const LATE_PARTICIPANTS = ["박초은", "김지수(98)", "이찬희", "황주원", "류태경", "윤은비", "김지수(02)", "이상준"];
 
-const LEADER_BLOCKLIST = ["이희재", "김동규", "이세은", "박연우", "이예진", "박주은", "노연교", "조경찬", "장영광"];
+const LEADER_BLOCKLIST = ["이희재", "김동규", "이세은", "박연우", "이예진", "박주은", "노연교", "장영광"];
 
 const MAX_ATTEMPTS = 900;
 
